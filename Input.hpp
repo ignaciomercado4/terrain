@@ -7,10 +7,9 @@
 #include "./Camera.hpp"
 #include "./Vertex.hpp"
 
-
 class Input
 {
-    private:
-    public:
-        static void update(Window &window, Camera &camera, glm::mat4 model, std::vector<Vertex> &vertices);
+private:
+public:
+    static void update(Window &window, Camera &camera, glm::mat4 model, std::vector<Vertex> &vertices, std::vector<unsigned int> &indices);
 };

@@ -12,7 +12,7 @@
 float SPEED = 0.05f;
 float ROTATION_SPEED = 2.0f;
 
-void Input::update(Window &window, Camera &camera, glm::mat4 model, std::vector<Vertex> &vertices)
+void Input::update(Window &window, Camera &camera, glm::mat4 model, std::vector<Vertex> &vertices, std::vector<unsigned int> &indices)
 {
     if (glfwGetKey(window.getWindowPointer(), GLFW_KEY_W) == GLFW_PRESS)
     {
@@ -70,8 +70,6 @@ void Input::update(Window &window, Camera &camera, glm::mat4 model, std::vector<
         glm::vec3 rayWorld(t.x, t.y, t.z);
         rayWorld = glm::normalize(rayWorld);
 
-        std::cout << "VECTOR: " << rayWorld.x << " " << rayWorld.y << " " << rayWorld.z << "\n";
-
         glm::vec3 rayOrigin = camera.getEye();
         glm::vec3 rayDir = glm::normalize(rayWorld);
 
@@ -84,22 +82,41 @@ void Input::update(Window &window, Camera &camera, glm::mat4 model, std::vector<
         if (fabs(denom) > EPS)
         {
             float t = glm::dot(planePoint - rayOrigin, planeNormal) / denom;
-            if (t >= 0.0f)
+            if (true)
             {
                 hitPoint = rayOrigin + t * rayDir;
-                std::cout << "HIT at t=" << t << " -> ("
-                          << hitPoint.x << ", " << hitPoint.y << ", " << hitPoint.z << ")\n";
 
-                for (int i = 0; i < vertices.size(); i += 3)
+                for (int tri = 0; tri < indices.size(); tri += 3)
                 {
-                    glm::vec3 v1_world = glm::vec3(model * glm::vec4(vertices.at(i).position, 1.0f));
-                    glm::vec3 v2_world = glm::vec3(model * glm::vec4(vertices.at(i + 1).position, 1.0f));
-                    glm::vec3 v3_world = glm::vec3(model * glm::vec4(vertices.at(i + 2).position, 1.0f));
+                    
+                    unsigned int i0 = indices[tri];
+                    unsigned int i1 = indices[tri + 1];
+                    unsigned int i2 = indices[tri + 2];
 
-                    bool isInside = Utils::isPointInsideTriangle(v1_world, v2_world, v3_world, hitPoint);
-                    if (isInside)
+                    glm::vec3 v0 = vertices[i0].position;
+                    glm::vec3 v1 = vertices[i1].position;
+                    glm::vec3 v2 = vertices[i2].position;
+
+                    glm::vec3 edge1 = v1 - v0;
+                    glm::vec3 edge2 = v2 - v0;
+                    glm::vec3 normal = glm::normalize(glm::cross(edge1, edge2));
+
+                    float denom = glm::dot(normal, rayDir);
+                    const float EPS = 1e-6f;
+                    if (fabs(denom) > EPS)
                     {
-                        std::cout << "Hit inside triangle\n";
+                        float t = glm::dot(v0 - rayOrigin, normal) / denom;
+                        if (t >= 0.0f)
+                        {
+                            glm::vec3 hitPoint = rayOrigin + t * rayDir;
+                            bool inside = Utils::isPointInsideTriangle(v0, v1, v2, hitPoint);
+                            if (inside)
+                            {
+                                vertices[i0].position.y += 0.01f;
+                                vertices[i1].position.y += 0.01f;
+                                vertices[i2].position.y += 0.01f;
+                            }
+                        }
                     }
                 }
             }

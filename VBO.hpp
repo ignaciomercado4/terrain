@@ -12,7 +12,7 @@ private:
     GLenum type;
 
 public:
-    VBO(GLenum _type);
+    VBO(GLenum _type = GL_ARRAY_BUFFER);
     ~VBO() override;
     void setBufferData(GLsizeiptr size, const void *data, GLenum usage);
     void bind() override;
