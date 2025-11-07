@@ -21,6 +21,7 @@ public:
 
     // Uniform methods
     void setMat4(glm::mat4 m, std::string name);
+    void setInt(int i, std::string name);
 };
 
 #endif

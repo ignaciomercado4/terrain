@@ -112,9 +112,9 @@ void Input::update(Window &window, Camera &camera, glm::mat4 model, std::vector<
                             bool inside = Utils::isPointInsideTriangle(v0, v1, v2, hitPoint);
                             if (inside)
                             {
-                                vertices[i0].position.y += 0.01f;
-                                vertices[i1].position.y += 0.01f;
-                                vertices[i2].position.y += 0.01f;
+                                vertices[i0].position.y += 0.1f;
+                                vertices[i1].position.y += 0.1f;
+                                vertices[i2].position.y += 0.1f;
                             }
                         }
                     }

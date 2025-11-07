@@ -85,8 +85,22 @@ void Shader::setMat4(glm::mat4 m, std::string name)
     if (location == -1)
     {
         std::cerr << "ERROR: Unable to locate uniform (Mat4) named: " << name << "\n";
-    } else
+    }
+    else
     {
         glUniformMatrix4fv(location, 1, GL_FALSE, &m[0][0]);
+    }
+}
+
+void Shader::setInt(int i, std::string name)
+{
+    int location = glGetUniformLocation(ID, name.c_str());
+    if (location == -1)
+    {
+        std::cerr << "ERROR: Unable to locate uniform (Mat4) named: " << name << "\n";
+    }
+    else
+    {
+        glUniform1i(location, i);
     }
 }
