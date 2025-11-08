@@ -4,7 +4,7 @@
 #include <cstdlib>
 #include <ctime>
 #define STB_PERLIN_IMPLEMENTATION
-#include <stb/stb_perlin.h>
+#include "stb_perlin.h"
 
 Terrain::Terrain(float gridSize, float quadSize)
 {
@@ -112,8 +112,6 @@ void Terrain::setPerlinNoiseHeightValues()
 
 void Terrain::updateAllNormals()
 {
-    std::cout << "MESSAGE: Updating terrain vertex normals..." << std::endl;
-
     for (auto &v : vertices)
     {
         v.normal = glm::vec3(0.0f);
@@ -146,6 +144,18 @@ void Terrain::updateAllNormals()
         else
             v.normal = glm::vec3(0.0f, 1.0f, 0.0f); // fallback
     }
+}
 
-    std::cout << "MESSAGE: Finished updating terrain vertex normals." << std::endl;
+void Terrain::updateBuffers(VAO &vao, VBO &vbo)
+{
+    vbo.bind();
+    vbo.setBufferData(vertices.size() * sizeof(Vertex), vertices.data(), GL_DYNAMIC_DRAW);
+    vao.setVertexAttributes(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(0));
+    vao.enableVAR(0);
+    vao.setVertexAttributes(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(3 * sizeof(float)));
+    vao.enableVAR(1);
+    vao.setVertexAttributes(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(7 * sizeof(float)));
+    vao.enableVAR(2);
+    vao.setVertexAttributes(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(9 * sizeof(float)));
+    vao.enableVAR(3);
 }

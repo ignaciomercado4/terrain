@@ -15,13 +15,16 @@
 #include "./Vertex.hpp"
 #include "./Texture.hpp"
 #include "./Terrain.hpp"
+#include "./UI.hpp"
 
 int main()
 {
-    Window window(1000, 1000, "Terrain");
+    Window window(1920, 1080, "Terrain");
 
-    Terrain terrain(100.0f, 2.0f / 10.0f);
+    Terrain terrain(1000.0f, 2.0f / 10.0f);
     terrain.setPerlinNoiseHeightValues();
+    
+    UI::init(window);
 
     VAO vao;
     VBO vbo(GL_ARRAY_BUFFER);
@@ -50,18 +53,8 @@ int main()
 
     while (!glfwWindowShouldClose(window.getWindowPointer()))
     {
-
-        vbo.bind();
-        vbo.setBufferData(terrain.vertices.size() * sizeof(Vertex), terrain.vertices.data(), GL_DYNAMIC_DRAW);
-        vao.setVertexAttributes(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(0));
-        vao.enableVAR(0);
-        vao.setVertexAttributes(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(3 * sizeof(float)));
-        vao.enableVAR(1);
-        vao.setVertexAttributes(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(7 * sizeof(float)));
-        vao.enableVAR(2);
-        vao.setVertexAttributes(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(9 * sizeof(float)));
-        vao.enableVAR(3);
-
+        terrain.updateBuffers(vao, vbo);
+        
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glEnable(GL_DEPTH_TEST);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -78,11 +71,14 @@ int main()
         testShader.setInt(0, "u_texture");
         glDrawElements(GL_TRIANGLES, terrain.indices.size(), GL_UNSIGNED_INT, 0);
 
+        UI::render();
+
         glfwSwapBuffers(window.getWindowPointer());
         glfwPollEvents();
     }
 
     glfwTerminate();
+    UI::terminate();
 
     return 0;
 }
