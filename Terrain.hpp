@@ -14,5 +14,7 @@ class Terrain
     Terrain(float gridSize, float quadSize);
     void setRandomHeightValues();
     void setPerlinNoiseHeightValues();
+    void updateAllNormals();
+    
 };
 #endif

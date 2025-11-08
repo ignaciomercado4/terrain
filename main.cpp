@@ -18,9 +18,9 @@
 
 int main()
 {
-    Window window(1920, 1080, "Terrain");
+    Window window(1000, 1000, "Terrain");
 
-    Terrain terrain(1000.0f, 2.0f / 10.f);
+    Terrain terrain(100.0f, 2.0f / 10.0f);
     terrain.setPerlinNoiseHeightValues();
 
     VAO vao;
@@ -34,6 +34,8 @@ int main()
     vao.enableVAR(1);
     vao.setVertexAttributes(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(7 * sizeof(float)));
     vao.enableVAR(2);
+    vao.setVertexAttributes(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(9 * sizeof(float)));
+    vao.enableVAR(3);
 
     VBO ebo(GL_ELEMENT_ARRAY_BUFFER);
     ebo.bind();
@@ -57,6 +59,8 @@ int main()
         vao.enableVAR(1);
         vao.setVertexAttributes(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(7 * sizeof(float)));
         vao.enableVAR(2);
+        vao.setVertexAttributes(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(9 * sizeof(float)));
+        vao.enableVAR(3);
 
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glEnable(GL_DEPTH_TEST);
@@ -64,9 +68,12 @@ int main()
         // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
         glm::mat4 model(1.0f);
-        Input::update(window, camera, model, terrain.vertices, terrain.indices);
-        glm::mat4 mvp = camera.getProjectionMatrix(window.ratio) * camera.getViewMatrix() * model;
-        testShader.setMat4(mvp, "u_mvp");
+        Input::update(window, camera, model, terrain);
+        testShader.setMat4(camera.getProjectionMatrix(window.ratio), "u_projection");
+        testShader.setMat4(camera.getViewMatrix(), "u_view");
+        testShader.setMat4(model, "u_model");
+        testShader.setVec3(camera.getEye(), "u_viewPosition");
+
         texture.bind();
         testShader.setInt(0, "u_texture");
         glDrawElements(GL_TRIANGLES, terrain.indices.size(), GL_UNSIGNED_INT, 0);

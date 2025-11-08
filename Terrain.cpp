@@ -8,6 +8,7 @@
 
 Terrain::Terrain(float gridSize, float quadSize)
 {
+    std::cout << "MESSAGE: Generating base terrain..." << std::endl;
     for (int i = 0; i <= gridSize; i++)
     {
         for (int j = 0; j <= gridSize; j++)
@@ -20,7 +21,7 @@ Terrain::Terrain(float gridSize, float quadSize)
             u = (float)(j % 2 == 0 ? 0.0f : 1.0f);
             v = (float)(i % 2 == 0 ? 0.0f : 1.0f);
 
-            vertices.push_back({{x, 0.0f, z}, {(float)i / 10.0f, (float)i / 10.0f, (float)i / 10.0f, 1.0f}, {u, v}});
+            vertices.push_back({{x, 0.0f, z}, {(float)i / 10.0f, (float)i / 10.0f, (float)i / 10.0f, 1.0f}, {u, v}, {0.0f, 1.0f, 0.0f}});
         }
     }
 
@@ -47,10 +48,12 @@ Terrain::Terrain(float gridSize, float quadSize)
     };
 
     std::cout << "MESSAGE: " << gridSize << "x" << gridSize << " grid created with quad size of: " << quadSize << "." << std::endl;
+    std::cout << "MESSAGE: Finished generating base terrain." << std::endl;
 }
 
 void Terrain::setRandomHeightValues()
 {
+    std::cout << "MESSAGE: Setting randomized terrain height values..." << std::endl;
     srand((unsigned)time(0));
 
     for (int tri = 0; tri < indices.size(); tri += 3)
@@ -65,10 +68,15 @@ void Terrain::setRandomHeightValues()
         vertices[i1].position.y = val;
         vertices[i2].position.y = val;
     }
+
+    std::cout << "MESSAGE: Finished setting randomized terrain height values." << std::endl;
+
+    updateAllNormals();
 }
 
 void Terrain::setPerlinNoiseHeightValues()
 {
+    std::cout << "MESSAGE: Setting perlin noise generated terrain height values..." << std::endl;
     float scale = 0.2f;        // controls how zoomed-in the terrain looks
     int octaves = 4;           // number of noise layers
     float persistence = 0.5f;  // amplitude falloff per octave
@@ -79,7 +87,7 @@ void Terrain::setPerlinNoiseHeightValues()
         float x = vertex.position.x * scale;
         float z = vertex.position.z * scale;
 
-        // fractal (multi-octave) perlin noise 
+        // fractal (multi-octave) perlin noise
         float amplitude = 1.0f;
         float frequency = 1.0f;
         float total = 0.0f;
@@ -97,4 +105,47 @@ void Terrain::setPerlinNoiseHeightValues()
         float h = (total / maxValue + 1.0f) * 0.5f; // normalize to 0,1
         vertex.position.y = h * heightScale;
     }
+    std::cout << "MESSAGE: Finished setting perlin noise generated terrain height values..." << std::endl;
+
+    updateAllNormals();
+}
+
+void Terrain::updateAllNormals()
+{
+    std::cout << "MESSAGE: Updating terrain vertex normals..." << std::endl;
+
+    for (auto &v : vertices)
+    {
+        v.normal = glm::vec3(0.0f);
+    }
+
+    for (size_t tri = 0; tri < indices.size(); tri += 3)
+    {
+        unsigned int i0 = indices[tri];
+        unsigned int i1 = indices[tri + 1];
+        unsigned int i2 = indices[tri + 2];
+
+        glm::vec3 p0 = vertices[i0].position;
+        glm::vec3 p1 = vertices[i1].position;
+        glm::vec3 p2 = vertices[i2].position;
+
+        glm::vec3 U = p1 - p0;
+        glm::vec3 V = p2 - p0;
+
+        glm::vec3 faceNormal = glm::normalize(glm::cross(U, V));
+
+        vertices[i0].normal += faceNormal;
+        vertices[i1].normal += faceNormal;
+        vertices[i2].normal += faceNormal;
+    }
+
+    for (auto &v : vertices)
+    {
+        if (glm::length(v.normal) > 0.0001f)
+            v.normal = glm::normalize(v.normal);
+        else
+            v.normal = glm::vec3(0.0f, 1.0f, 0.0f); // fallback
+    }
+
+    std::cout << "MESSAGE: Finished updating terrain vertex normals." << std::endl;
 }
