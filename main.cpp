@@ -20,40 +20,25 @@
 int main()
 {
     Window window(1920, 1080, "Terrain");
+    std::cout << window.ratio << std::endl;
 
-    Terrain terrain(1000.0f, 2.0f / 10.0f);
+    Terrain terrain(100.0f, 2.0f / 10.0f);
     terrain.setPerlinNoiseHeightValues();
     
     UI::init(window);
-
-    VAO vao;
-    VBO vbo(GL_ARRAY_BUFFER);
-    vao.bind();
-    vbo.bind();
-    vbo.setBufferData(terrain.vertices.size() * sizeof(Vertex), terrain.vertices.data(), GL_DYNAMIC_DRAW);
-    vao.setVertexAttributes(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(0));
-    vao.enableVAR(0);
-    vao.setVertexAttributes(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(3 * sizeof(float)));
-    vao.enableVAR(1);
-    vao.setVertexAttributes(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(7 * sizeof(float)));
-    vao.enableVAR(2);
-    vao.setVertexAttributes(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(9 * sizeof(float)));
-    vao.enableVAR(3);
-
-    VBO ebo(GL_ELEMENT_ARRAY_BUFFER);
-    ebo.bind();
-    ebo.setBufferData(terrain.indices.size() * sizeof(unsigned int), terrain.indices.data(), GL_DYNAMIC_DRAW);
 
     Shader testShader("./Resources/Shaders/test.vert", "./Resources/Shaders/test.frag");
     testShader.use();
 
     Camera camera(glm::vec3(0.0f, 1.0f, 3.0f));
 
-    Texture texture("./Resources/Textures/test.png");
+    Texture snowGrassTexture("./Resources/Textures/snow_grass.png");
+    Texture grassTexture("./Resources/Textures/grass.png");
 
     while (!glfwWindowShouldClose(window.getWindowPointer()))
     {
-        terrain.updateBuffers(vao, vbo);
+        terrain.updateBuffers();
+        std::cout << camera.getEye().y << std::endl;
         
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glEnable(GL_DEPTH_TEST);
@@ -67,11 +52,13 @@ int main()
         testShader.setMat4(model, "u_model");
         testShader.setVec3(camera.getEye(), "u_viewPosition");
 
-        texture.bind();
-        testShader.setInt(0, "u_texture");
+        snowGrassTexture.bindToUnit(0);
+        testShader.setInt(0, "u_snowGrassTexture");
+        grassTexture.bindToUnit(1);
+        testShader.setInt(1, "u_grassTexture");
         glDrawElements(GL_TRIANGLES, terrain.indices.size(), GL_UNSIGNED_INT, 0);
 
-        UI::render();
+        // UI::render();
 
         glfwSwapBuffers(window.getWindowPointer());
         glfwPollEvents();

@@ -1,27 +1,27 @@
 #include "./Terrain.hpp"
-#include <vector>
-#include <iostream>
-#include <cstdlib>
-#include <ctime>
 #define STB_PERLIN_IMPLEMENTATION
 #include "stb_perlin.h"
 
-Terrain::Terrain(float gridSize, float quadSize)
+#define STB_PERLIN_IMPLEMENTATION
+
+Terrain::Terrain(int gridSize, float quadSize) : vbo(GL_ARRAY_BUFFER), ebo(GL_ELEMENT_ARRAY_BUFFER)
 {
     std::cout << "MESSAGE: Generating base terrain..." << std::endl;
+
     for (int i = 0; i <= gridSize; i++)
     {
         for (int j = 0; j <= gridSize; j++)
         {
             float x = -1.0f + j * quadSize;
             float z = -1.0f + i * quadSize;
-            float u = (float)(j % 2);
-            float v = (float)(i % 2);
 
-            u = (float)(j % 2 == 0 ? 0.0f : 1.0f);
-            v = (float)(i % 2 == 0 ? 0.0f : 1.0f);
+            float u = (j % 2 == 0 ? 0.0f : 1.0f);
+            float v = (i % 2 == 0 ? 0.0f : 1.0f);
 
-            vertices.push_back({{x, 0.0f, z}, {(float)i / 10.0f, (float)i / 10.0f, (float)i / 10.0f, 1.0f}, {u, v}, {0.0f, 1.0f, 0.0f}});
+            vertices.push_back({{x, 0.0f, z},
+                                {(float)i / 10.0f, (float)i / 10.0f, (float)i / 10.0f, 1.0f},
+                                {u, v},
+                                {0.0f, 1.0f, 0.0f}});
         }
     }
 
@@ -45,21 +45,60 @@ Terrain::Terrain(float gridSize, float quadSize)
             indices.push_back(v2);
             indices.push_back(v3);
         }
-    };
+    }
+
+    setBuffers();
 
     std::cout << "MESSAGE: " << gridSize << "x" << gridSize << " grid created with quad size of: " << quadSize << "." << std::endl;
     std::cout << "MESSAGE: Finished generating base terrain." << std::endl;
 }
 
+void Terrain::setBuffers()
+{
+    vao.bind();
+    vbo.bind();
+
+    vbo.setBufferData(vertices.size() * sizeof(Vertex), vertices.data(), GL_DYNAMIC_DRAW);
+
+    vao.setVertexAttributes(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(0));
+    vao.enableVAR(0);
+    vao.setVertexAttributes(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(3 * sizeof(float)));
+    vao.enableVAR(1);
+    vao.setVertexAttributes(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(7 * sizeof(float)));
+    vao.enableVAR(2);
+    vao.setVertexAttributes(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(9 * sizeof(float)));
+    vao.enableVAR(3);
+
+    ebo.bind();
+    ebo.setBufferData(indices.size() * sizeof(unsigned int), indices.data(), GL_DYNAMIC_DRAW);
+}
+
+void Terrain::updateBuffers()
+{
+    vao.bind();
+    vbo.bind();
+
+    vbo.setBufferData(vertices.size() * sizeof(Vertex), vertices.data(), GL_DYNAMIC_DRAW);
+
+    vao.setVertexAttributes(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(0));
+    vao.enableVAR(0);
+    vao.setVertexAttributes(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(3 * sizeof(float)));
+    vao.enableVAR(1);
+    vao.setVertexAttributes(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(7 * sizeof(float)));
+    vao.enableVAR(2);
+    vao.setVertexAttributes(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(9 * sizeof(float)));
+    vao.enableVAR(3);
+}
+
 void Terrain::setRandomHeightValues()
 {
     std::cout << "MESSAGE: Setting randomized terrain height values..." << std::endl;
-    srand((unsigned)time(0));
 
-    for (int tri = 0; tri < indices.size(); tri += 3)
+    srand(static_cast<unsigned>(time(0)));
+
+    for (size_t tri = 0; tri < indices.size(); tri += 3)
     {
-        int val;
-        val = (rand() % 2);
+        int val = rand() % 2;
         unsigned int i0 = indices[tri];
         unsigned int i1 = indices[tri + 1];
         unsigned int i2 = indices[tri + 2];
@@ -69,9 +108,10 @@ void Terrain::setRandomHeightValues()
         vertices[i2].position.y = val;
     }
 
-    std::cout << "MESSAGE: Finished setting randomized terrain height values." << std::endl;
-
     updateAllNormals();
+    updateBuffers();
+
+    std::cout << "MESSAGE: Finished setting randomized terrain height values." << std::endl;
 }
 
 void Terrain::setPerlinNoiseHeightValues()
@@ -113,9 +153,7 @@ void Terrain::setPerlinNoiseHeightValues()
 void Terrain::updateAllNormals()
 {
     for (auto &v : vertices)
-    {
         v.normal = glm::vec3(0.0f);
-    }
 
     for (size_t tri = 0; tri < indices.size(); tri += 3)
     {
@@ -138,24 +176,5 @@ void Terrain::updateAllNormals()
     }
 
     for (auto &v : vertices)
-    {
-        if (glm::length(v.normal) > 0.0001f)
-            v.normal = glm::normalize(v.normal);
-        else
-            v.normal = glm::vec3(0.0f, 1.0f, 0.0f); // fallback
-    }
-}
-
-void Terrain::updateBuffers(VAO &vao, VBO &vbo)
-{
-    vbo.bind();
-    vbo.setBufferData(vertices.size() * sizeof(Vertex), vertices.data(), GL_DYNAMIC_DRAW);
-    vao.setVertexAttributes(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(0));
-    vao.enableVAR(0);
-    vao.setVertexAttributes(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(3 * sizeof(float)));
-    vao.enableVAR(1);
-    vao.setVertexAttributes(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(7 * sizeof(float)));
-    vao.enableVAR(2);
-    vao.setVertexAttributes(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(9 * sizeof(float)));
-    vao.enableVAR(3);
+        v.normal = glm::length(v.normal) > 0.0001f ? glm::normalize(v.normal) : glm::vec3(0.0f, 1.0f, 0.0f);
 }

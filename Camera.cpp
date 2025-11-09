@@ -21,7 +21,7 @@ glm::mat4 Camera::getViewMatrix() const
 
 glm::mat4 Camera::getProjectionMatrix(float aspect) const
 {
-    return glm::perspective(glm::radians(FOV), aspect, 0.1f, 100.0f);
+    return glm::perspective(glm::radians(FOV), (float)aspect, 0.1f, 100.0f);
 }
 
 void Camera::moveForward(float speed)

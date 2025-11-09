@@ -85,6 +85,7 @@ void Shader::setMat4(glm::mat4 m, std::string name)
     if (location == -1)
     {
         std::cerr << "ERROR: Unable to locate uniform (Mat4) named: " << name << "\n";
+        exit(1);
     }
     else
     {
@@ -98,6 +99,7 @@ void Shader::setInt(int i, std::string name)
     if (location == -1)
     {
         std::cerr << "ERROR: Unable to locate uniform (Mat4) named: " << name << "\n";
+        exit(1);
     }
     else
     {
@@ -111,6 +113,7 @@ void Shader::setVec3(glm::vec3 v, std::string name)
     if (location == -1)
     {
         std::cerr << "ERROR: Unable to locate uniform (Mat4) named: " << name << "\n";
+        exit(1);
     }
     else
     {
