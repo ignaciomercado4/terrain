@@ -12,7 +12,7 @@ uniform vec3 u_viewPosition;
 
 void main(void)
 {
-    vec3 lightColor = vec3(1.0f);
+    vec3 lightColor = vec3(0.8f, 0.8f, 1.0f);
     vec3 lightPosition = vec3(5.0f, 30.0f, 2.0f);
 
     // smooth blending between grass and snow

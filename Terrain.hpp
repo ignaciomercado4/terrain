@@ -10,6 +10,18 @@
 #include "./VAO.hpp"
 #include "./VBO.hpp"
 
+struct perlinParams
+{
+    float amplitude = 1.0f;
+    float frequency = 1.0f;
+    float total = 0.0f;
+    float maxValue = 0.0f;
+    float scale = 0.2f;       // controls how zoomed-in the terrain looks
+    int octaves = 4;          // number of noise layers
+    float persistence = 0.5f; // amplitude falloff per octave
+    float heightScale = 10.0f;
+};
+
 class Terrain
 {
 private:
@@ -19,6 +31,8 @@ private:
     void setBuffers();
 
 public:
+    perlinParams perlinParameters;
+
     void updateAllNormals();
     Terrain(int gridSize, float quadSize);
     std::vector<Vertex> vertices;
@@ -26,6 +40,7 @@ public:
     void updateBuffers();
     void setRandomHeightValues();
     void setPerlinNoiseHeightValues();
+    void draw();
 };
 
 #endif

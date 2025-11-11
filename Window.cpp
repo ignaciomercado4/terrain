@@ -45,3 +45,9 @@ GLFWwindow* Window::getWindowPointer()
 {
     return window;
 }
+
+void Window::swapBuffersPollEvents()
+{
+    glfwSwapBuffers(getWindowPointer());
+    glfwPollEvents();
+}

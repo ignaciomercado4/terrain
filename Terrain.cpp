@@ -8,6 +8,17 @@ Terrain::Terrain(int gridSize, float quadSize) : vbo(GL_ARRAY_BUFFER), ebo(GL_EL
 {
     std::cout << "MESSAGE: Generating base terrain..." << std::endl;
 
+    perlinParameters = {
+        1.0f,
+        1.0f,
+        0.0f,
+        0.0f,
+        0.2f,
+        4,
+        0.5f,
+        10.0f,
+    };
+
     for (int i = 0; i <= gridSize; i++)
     {
         for (int j = 0; j <= gridSize; j++)
@@ -117,37 +128,35 @@ void Terrain::setRandomHeightValues()
 void Terrain::setPerlinNoiseHeightValues()
 {
     std::cout << "MESSAGE: Setting perlin noise generated terrain height values..." << std::endl;
-    float scale = 0.2f;        // controls how zoomed-in the terrain looks
-    int octaves = 4;           // number of noise layers
-    float persistence = 0.5f;  // amplitude falloff per octave
-    float heightScale = 10.0f; // vertical exaggeration
 
     for (auto &vertex : vertices)
     {
-        float x = vertex.position.x * scale;
-        float z = vertex.position.z * scale;
+        float x = vertex.position.x * perlinParameters.scale;
+        float z = vertex.position.z * perlinParameters.scale;
 
-        // fractal (multi-octave) perlin noise
-        float amplitude = 1.0f;
-        float frequency = 1.0f;
+        float amp = 1.0f;
+        float frequency = perlinParameters.frequency;
         float total = 0.0f;
         float maxValue = 0.0f;
 
-        for (int i = 0; i < octaves; i++)
+        for (int i = 0; i < perlinParameters.octaves; i++)
         {
             float noise = stb_perlin_noise3(x * frequency, z * frequency, 0.0f, 0, 0, 0);
-            total += noise * amplitude;
-            maxValue += amplitude;
-            amplitude *= persistence;
+            total += noise * amp;
+            maxValue += amp;
+
+            amp *= perlinParameters.persistence;
             frequency *= 2.0f;
         }
 
-        float h = (total / maxValue + 1.0f) * 0.5f; // normalize to 0,1
-        vertex.position.y = h * heightScale;
+        float h = (total / maxValue + 1.0f) * 0.5f; 
+        vertex.position.y = h * perlinParameters.heightScale * perlinParameters.amplitude;
     }
-    std::cout << "MESSAGE: Finished setting perlin noise generated terrain height values..." << std::endl;
 
     updateAllNormals();
+    updateBuffers();
+
+    std::cout << "MESSAGE: Finished setting perlin noise generated terrain height values." << std::endl;
 }
 
 void Terrain::updateAllNormals()
@@ -177,4 +186,10 @@ void Terrain::updateAllNormals()
 
     for (auto &v : vertices)
         v.normal = glm::length(v.normal) > 0.0001f ? glm::normalize(v.normal) : glm::vec3(0.0f, 1.0f, 0.0f);
+}
+
+void Terrain::draw()
+{
+    vao.bind();
+    glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0);
 }

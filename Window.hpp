@@ -15,6 +15,7 @@ class Window
         float ratio;
         Window(int width, int height, const char* title);
         GLFWwindow* getWindowPointer();
+        void swapBuffersPollEvents();
 };
 
 #endif

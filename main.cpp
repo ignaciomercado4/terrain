@@ -16,15 +16,14 @@
 #include "./Texture.hpp"
 #include "./Terrain.hpp"
 #include "./UI.hpp"
+#include "./Globals.hpp"
 
 int main()
 {
-    Window window(1920, 1080, "Terrain");
-    std::cout << window.ratio << std::endl;
-
+    Window window(1080, 1080, "Terrain");
     Terrain terrain(100.0f, 2.0f / 10.0f);
     terrain.setPerlinNoiseHeightValues();
-    
+
     UI::init(window);
 
     Shader testShader("./Resources/Shaders/test.vert", "./Resources/Shaders/test.frag");
@@ -34,16 +33,15 @@ int main()
 
     Texture snowGrassTexture("./Resources/Textures/snow_grass.png");
     Texture grassTexture("./Resources/Textures/grass.png");
+    Texture treeTexture("./Resources/Textures/tree.png");
 
     while (!glfwWindowShouldClose(window.getWindowPointer()))
     {
         terrain.updateBuffers();
-        std::cout << camera.getEye().y << std::endl;
-        
+
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glEnable(GL_DEPTH_TEST);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
         glm::mat4 model(1.0f);
         Input::update(window, camera, model, terrain);
@@ -56,12 +54,22 @@ int main()
         testShader.setInt(0, "u_snowGrassTexture");
         grassTexture.bindToUnit(1);
         testShader.setInt(1, "u_grassTexture");
-        glDrawElements(GL_TRIANGLES, terrain.indices.size(), GL_UNSIGNED_INT, 0);
 
-        // UI::render();
+        // debug: wireframe
+        if (Globals::isWireframe)
+        {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        }
+        else
+        {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        };
 
-        glfwSwapBuffers(window.getWindowPointer());
-        glfwPollEvents();
+        terrain.draw();
+
+        UI::render(terrain);
+
+        window.swapBuffersPollEvents();
     }
 
     glfwTerminate();
