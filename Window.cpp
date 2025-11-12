@@ -34,6 +34,10 @@ Window::Window(int _width, int _height, const char* _title)
         exit(-1);
     }
 
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+
     GLObject::checkContext();
     ratio = (float)_width / (float)_height;
     width = _width;

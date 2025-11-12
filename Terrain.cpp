@@ -188,6 +188,7 @@ void Terrain::updateAllNormals()
         v.normal = glm::length(v.normal) > 0.0001f ? glm::normalize(v.normal) : glm::vec3(0.0f, 1.0f, 0.0f);
 }
 
+
 void Terrain::draw()
 {
     vao.bind();

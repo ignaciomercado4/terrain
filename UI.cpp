@@ -12,7 +12,7 @@ void UI::init(Window &window)
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO &io = ImGui::GetIO();
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    io.ConfigFlags |= ImGuiConfigFlags_NavNoCaptureKeyboard;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
 
     ImGui_ImplGlfw_InitForOpenGL(window.getWindowPointer(), true);
@@ -44,42 +44,36 @@ void UI::render(Terrain &terrain)
         if (ImGui::SliderFloat("Height Scale", &terrain.perlinParameters.heightScale, 0.0f, 200.0f, "%.2f"))
         {
             terrain.setPerlinNoiseHeightValues();
-            terrain.updateBuffers();
         }
 
         // amplitude: strength of the base noise layer
         if (ImGui::SliderFloat("Amplitude", &terrain.perlinParameters.amplitude, 0.1f, 50.0f, "%.2f"))
         {
             terrain.setPerlinNoiseHeightValues();
-            terrain.updateBuffers();
         }
 
         // frequency: how dense the noise pattern is (smaller = wider hills)
         if (ImGui::SliderFloat("Frequency", &terrain.perlinParameters.frequency, 0.1f, 10.0f, "%.2f"))
         {
             terrain.setPerlinNoiseHeightValues();
-            terrain.updateBuffers();
         }
 
         // scale: how zoomed-in the noise looks (lower = broader features)
         if (ImGui::SliderFloat("Scale", &terrain.perlinParameters.scale, 0.01f, 1.0f, "%.3f"))
         {
             terrain.setPerlinNoiseHeightValues();
-            terrain.updateBuffers();
         }
 
         // persistence: amplitude decay per octave (controls roughness)
         if (ImGui::SliderFloat("Persistence", &terrain.perlinParameters.persistence, 0.1f, 1.0f, "%.2f"))
         {
             terrain.setPerlinNoiseHeightValues();
-            terrain.updateBuffers();
         }
 
         // octaves: number of noise layers (higher = more fine detail)
         if (ImGui::SliderInt("Octaves", &terrain.perlinParameters.octaves, 1, 12))
         {
             terrain.setPerlinNoiseHeightValues();
-            terrain.updateBuffers();
         }
 
         // render wireframe
