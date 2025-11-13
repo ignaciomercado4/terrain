@@ -159,7 +159,7 @@ void Terrain::setPerlinNoiseHeightValues()
     updateAllNormals();
     updateBuffers();
 
-    generateTrees(10);
+    generateTrees(200);
     std::cout << "MESSAGE: Finished setting perlin noise generated terrain height values." << std::endl;
 }
 
@@ -200,6 +200,11 @@ void Terrain::draw()
 
 void Terrain::generateTrees(int maxTreeCount)
 {
+    if (!trees.empty())
+    {
+        trees.clear();
+    }
+
     srand(static_cast<unsigned>(time(0)));
     int vertexCount = vertices.size();
 
@@ -221,10 +226,18 @@ void Terrain::generateTrees(int maxTreeCount)
             continue;
 
         auto tree = std::make_unique<Tree>();
-        tree->setPosition(glm::vec3(position.x, position.y + 0.5f, position.z));
+        tree->setPosition(glm::vec3(position.x, position.y + 0.4f, position.z));
         tree->setRotation(glm::vec3(0.0f, rand() % 360, 0.0f));
         trees.push_back(std::move(tree));
     }
 
     std::cout << "MESSAGE: Generated " << trees.size() << " trees.\n";
+}
+
+void Terrain::renderTrees()
+{
+    for (auto& t : trees)
+    {
+        t->render();
+    }
 }

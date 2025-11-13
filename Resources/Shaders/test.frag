@@ -35,7 +35,7 @@ void main(void)
     vec3 ambient = 0.1f * lightColor;
     vec3 diffuse = diff * lightColor;
 
-    float specularShininess = (height - 3.0f)/(9.0f - 3.0f);
+    float specularShininess = ((height - 3.0f)/(9.0f - 3.0f)) / 2.0f;
 
     vec3 specular = specularShininess * spec * lightColor;
 

@@ -47,6 +47,7 @@ class Terrain
 
     void generateTrees(int maxTreeCount);
     void renderTrees();
+    void updateTreeHeight();
     
     void draw();
 };

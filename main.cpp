@@ -60,11 +60,7 @@ int main()
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         Globals::terrain->draw();
-
-        for (auto& t : Globals::terrain->trees)
-        {
-            t->render();
-        }
+        Globals::terrain->renderTrees();
 
 
         UI::render();
