@@ -1,7 +1,7 @@
 #ifndef UI_HPP
 #define UI_HPP
 
-#include "./Window.hpp"
+#include "../Graphics/Window.hpp"
 
 class UI
 {

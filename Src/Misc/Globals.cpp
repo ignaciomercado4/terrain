@@ -1,5 +1,5 @@
 #include "./Globals.hpp"
-#include "./Camera.hpp"
+#include "../Game/Camera.hpp"
 
 #define TERRAIN_GRID_SIZE 100.0f
 #define TERRAIN_QUAD_SIZE 10.0f

@@ -1,6 +1,6 @@
-#include "Camera.hpp"
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/constants.hpp>
+#include "./Camera.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/constants.hpp"
 
 Camera::Camera(glm::vec3 _eye, glm::vec3 _front, glm::vec3 _up, float _FOV)
 {

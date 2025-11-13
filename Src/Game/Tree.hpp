@@ -2,11 +2,11 @@
 #define TREE_HPP
 
 #include "./GameObject.hpp"
-#include "./Texture.hpp"
-#include "./VAO.hpp"
-#include "./VBO.hpp"
-#include "./Vertex.hpp"
-#include "./Shader.hpp"
+#include "../Graphics/Texture.hpp"
+#include "../Graphics/VAO.hpp"
+#include "../Graphics/VBO.hpp"
+#include "../Graphics/Vertex.hpp"
+#include "../Graphics/Shader.hpp"
 #include <vector>
 
 class Tree : public GameObject

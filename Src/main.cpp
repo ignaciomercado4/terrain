@@ -5,19 +5,19 @@
 #include <iostream>
 #include <vector>
 #include <iomanip>
-#include "./Shader.hpp"
-#include "./GLObject.hpp"
-#include "./VAO.hpp"
-#include "./VBO.hpp"
-#include "./Camera.hpp"
-#include "./Window.hpp"
-#include "./Input.hpp"
-#include "./Vertex.hpp"
-#include "./Texture.hpp"
-#include "./Terrain.hpp"
-#include "./UI.hpp"
-#include "./Globals.hpp"
-#include "./Tree.hpp"
+#include "./Graphics/Shader.hpp"
+#include "./Graphics/GLObject.hpp"
+#include "./Graphics/VAO.hpp"
+#include "./Graphics/VBO.hpp"
+#include "./Graphics/Window.hpp"
+#include "./Graphics/Vertex.hpp"
+#include "./Graphics/Texture.hpp"
+#include "./Game/Camera.hpp"
+#include "./Game/Input.hpp"
+#include "./Game/Terrain.hpp"
+#include "./Game/UI.hpp"
+#include "./Game/Tree.hpp"
+#include "./Misc/Globals.hpp"
 
 int main()
 {

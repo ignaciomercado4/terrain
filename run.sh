@@ -3,7 +3,10 @@ set -e
 
 APP="terrain"
 
-SRC="./*.cpp \
+SRC="./Src/main.cpp \
+    ./Src/Game/*.cpp \
+    ./Src/Graphics/*.cpp \
+    ./Src/Misc/*.cpp \
      ./Vendor/imgui-1.92.4/*.cpp \
      ./Vendor/imgui-1.92.4/backends/imgui_impl_glfw.cpp \
      ./Vendor/imgui-1.92.4/backends/imgui_impl_opengl3.cpp"

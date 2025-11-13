@@ -6,9 +6,9 @@
 #include <cstdlib>
 #include <ctime>
 #include <glm/glm.hpp>
-#include "./Vertex.hpp"
-#include "./VAO.hpp"
-#include "./VBO.hpp"
+#include "../Graphics/Vertex.hpp"
+#include "../Graphics/VAO.hpp"
+#include "../Graphics/VBO.hpp"
 #include "./Tree.hpp"
 #include <memory>
 

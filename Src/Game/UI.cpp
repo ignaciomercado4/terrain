@@ -3,8 +3,8 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 #include "./UI.hpp"
-#include "./Window.hpp"
-#include "./Globals.hpp"
+#include "../Graphics/Window.hpp"
+#include "../Misc/Globals.hpp"
 
 void UI::init(Window &window)
 {

@@ -1,7 +1,7 @@
 #ifndef UTILS_HPP
 #define UTILS_HPP
 
-#include <glm/glm.hpp>
+#include "glm/glm.hpp"
 #include <iostream>
 
 class Utils

@@ -1,7 +1,7 @@
 #include "./Tree.hpp"
-#include "./Vertex.hpp"
-#include "./Globals.hpp"
-#include "./Texture.hpp"
+#include "../Graphics/Vertex.hpp"
+#include "../Misc/Globals.hpp"
+#include "../Graphics/Texture.hpp"
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include <GL/glew.h>

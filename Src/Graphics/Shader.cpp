@@ -1,5 +1,5 @@
 #include "./Shader.hpp"
-#include "./Utils.hpp"
+#include "../Misc/Utils.hpp"
 #include <iostream>
 
 Shader::Shader(std::string VSPath, std::string FSPath)

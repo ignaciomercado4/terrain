@@ -3,10 +3,10 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <vector>
-#include "./Window.hpp"
-#include "./Camera.hpp"
-#include "./Vertex.hpp"
+#include "../Graphics/Window.hpp"
+#include "../Graphics/Vertex.hpp"
 #include "./Terrain.hpp"
+#include "./Camera.hpp"
 
 class Input
 {

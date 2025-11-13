@@ -6,10 +6,10 @@
 #include <vector>
 #include "./Input.hpp"
 #include "./Camera.hpp"
-#include "./Vertex.hpp"
-#include "./Utils.hpp"
+#include "../Graphics/Vertex.hpp"
+#include "../Misc/Utils.hpp"
 #include "./Terrain.hpp"
-#include "./Globals.hpp"
+#include "../Misc/Globals.hpp"
 
 float SPEED = 0.05f;
 float ROTATION_SPEED = 2.0f;

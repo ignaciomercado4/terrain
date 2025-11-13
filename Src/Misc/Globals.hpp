@@ -1,8 +1,8 @@
 #ifndef GLOBALS_HPP
 #define GLOBALS_HPP
 
-#include "./Camera.hpp"
-#include "./Terrain.hpp"
+#include "../Game/Camera.hpp"
+#include "../Game/Terrain.hpp"
 
 namespace Globals
 {
