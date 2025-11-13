@@ -14,7 +14,7 @@
 float SPEED = 0.05f;
 float ROTATION_SPEED = 2.0f;
 
-void Input::update(Window &window, glm::mat4 model, Terrain &terrain)
+void Input::update(Window &window, glm::mat4 model)
 {
     if (glfwGetKey(window.getWindowPointer(), GLFW_KEY_W) == GLFW_PRESS)
     {
@@ -92,16 +92,16 @@ void Input::update(Window &window, glm::mat4 model, Terrain &terrain)
             {
                 hitPoint = rayOrigin + t * rayDir;
 
-                for (int tri = 0; tri < terrain.indices.size(); tri += 3)
+                for (int tri = 0; tri < Globals::terrain->indices.size(); tri += 3)
                 {
                     
-                    unsigned int i0 = terrain.indices[tri];
-                    unsigned int i1 = terrain.indices[tri + 1];
-                    unsigned int i2 = terrain.indices[tri + 2];
+                    unsigned int i0 = Globals::terrain->indices[tri];
+                    unsigned int i1 = Globals::terrain->indices[tri + 1];
+                    unsigned int i2 = Globals::terrain->indices[tri + 2];
 
-                    glm::vec3 v0 = terrain.vertices[i0].position;
-                    glm::vec3 v1 = terrain.vertices[i1].position;
-                    glm::vec3 v2 = terrain.vertices[i2].position;
+                    glm::vec3 v0 = Globals::terrain->vertices[i0].position;
+                    glm::vec3 v1 = Globals::terrain->vertices[i1].position;
+                    glm::vec3 v2 = Globals::terrain->vertices[i2].position;
 
                     glm::vec3 edge1 = v1 - v0;
                     glm::vec3 edge2 = v2 - v0;
@@ -118,10 +118,10 @@ void Input::update(Window &window, glm::mat4 model, Terrain &terrain)
                             bool inside = Utils::isPointInsideTriangle(v0, v1, v2, hitPoint);
                             if (inside)
                             {
-                                terrain.vertices[i0].position.y += 0.01f;
-                                terrain.vertices[i1].position.y += 0.01f;
-                                terrain.vertices[i2].position.y += 0.01f;
-                                terrain.updateAllNormals();
+                                Globals::terrain->vertices[i0].position.y += 0.01f;
+                                Globals::terrain->vertices[i1].position.y += 0.01f;
+                                Globals::terrain->vertices[i2].position.y += 0.01f;
+                                Globals::terrain->updateAllNormals();
                             }
                         }
                     }

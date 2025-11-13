@@ -9,6 +9,8 @@
 #include "./Vertex.hpp"
 #include "./VAO.hpp"
 #include "./VBO.hpp"
+#include "./Tree.hpp"
+#include <memory>
 
 struct perlinParams
 {
@@ -22,24 +24,30 @@ struct perlinParams
     float heightScale = 10.0f;
 };
 
+// Topppa' the line
 class Terrain
 {
-private:
+    private:
     VAO vao;
     VBO vbo;
     VBO ebo;
     void setBuffers();
-
-public:
-    perlinParams perlinParameters;
-
-    void updateAllNormals();
+    
+    public:
     Terrain(int gridSize, float quadSize);
+    std::vector<std::unique_ptr<Tree>> trees;
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
+    perlinParams perlinParameters;
+    
+    void updateAllNormals();
     void updateBuffers();
     void setRandomHeightValues();
     void setPerlinNoiseHeightValues();
+
+    void generateTrees(int maxTreeCount);
+    void renderTrees();
+    
     void draw();
 };
 

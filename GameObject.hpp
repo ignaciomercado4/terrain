@@ -26,6 +26,9 @@ public:
     void setPosition(const glm::vec3& pos);
     void setRotation(const glm::vec3& rot);
     void setScale(const glm::vec3& scl);
+    glm::vec3 getPosition() const;
+    glm::vec3 getRotation() const;
+    glm::vec3 getScale() const;
 
     glm::mat4 getModelMatrix() const;
 };

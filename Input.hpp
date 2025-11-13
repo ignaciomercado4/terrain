@@ -12,5 +12,5 @@ class Input
 {
 private:
 public:
-    static void update(Window &window, glm::mat4 model, Terrain &terrain);
+    static void update(Window &window, glm::mat4 model);
 };

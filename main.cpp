@@ -4,8 +4,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 #include <vector>
-#include <climits>
-#include <cstdlib>
+#include <iomanip>
 #include "./Shader.hpp"
 #include "./GLObject.hpp"
 #include "./VAO.hpp"
@@ -23,11 +22,10 @@
 int main()
 {
     Window window(1080, 1080, "Terrain");
-    Terrain terrain(10.0f, 2.0f / 10.0f);
-    terrain.setPerlinNoiseHeightValues();
+    Globals::init();
+    Globals::terrain->setPerlinNoiseHeightValues();
 
     UI::init(window);
-    Tree tree;
 
     Shader testShader("./Resources/Shaders/test.vert", "./Resources/Shaders/test.frag");
 
@@ -36,14 +34,15 @@ int main()
 
     while (!glfwWindowShouldClose(window.getWindowPointer()))
     {
-        terrain.updateBuffers();
+        Globals::terrain->updateBuffers();
+
 
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glEnable(GL_DEPTH_TEST);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glm::mat4 model(1.0f);
-        Input::update(window, model, terrain);
+        Input::update(window, model);
         testShader.use();
         testShader.setMat4(Globals::camera.getProjectionMatrix(window.ratio), "u_projection");
         testShader.setMat4(Globals::camera.getViewMatrix(), "u_view");
@@ -60,10 +59,15 @@ int main()
         else
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-        terrain.draw();
-        tree.render();
+        Globals::terrain->draw();
 
-        UI::render(terrain);
+        for (auto& t : Globals::terrain->trees)
+        {
+            t->render();
+        }
+
+
+        UI::render();
 
         window.swapBuffersPollEvents();
     }

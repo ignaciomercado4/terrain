@@ -16,9 +16,15 @@ void GameObject::update(float delta) {}
 
 void GameObject::setPosition(const glm::vec3 &pos) { position = pos; }
 
-void GameObject::setRotation(const glm::vec3 &rot) { rotation = rot; }
+glm::vec3 GameObject::getPosition() const { return position; }
+
+void  GameObject::setRotation(const glm::vec3 &rot) { rotation = rot; }
+
+glm::vec3 GameObject::getRotation() const { return rotation; }
 
 void GameObject::setScale(const glm::vec3 &scl) { scale = scl; }
+
+glm::vec3 GameObject::getScale() const { return scale; }
 
 glm::mat4 GameObject::getModelMatrix() const
 {

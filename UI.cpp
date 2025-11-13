@@ -4,7 +4,6 @@
 #include "imgui_impl_opengl3.h"
 #include "./UI.hpp"
 #include "./Window.hpp"
-#include "./Terrain.hpp"
 #include "./Globals.hpp"
 
 void UI::init(Window &window)
@@ -19,7 +18,7 @@ void UI::init(Window &window)
     ImGui_ImplOpenGL3_Init();
 }
 
-void UI::render(Terrain &terrain)
+void UI::render()
 {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
@@ -31,8 +30,14 @@ void UI::render(Terrain &terrain)
         ImGui::Text("TERRAIN DATA");
         ImGui::Separator();
 
-        ImGui::Text("Terrain vertices: %li", terrain.vertices.size());
-        ImGui::Text("Terrain indices: %li", terrain.indices.size());
+        ImGui::Text("Terrain vertices: %li", Globals::terrain->vertices.size());
+        ImGui::Text("Terrain indices: %li", Globals::terrain->indices.size());
+
+
+        ImGui::Separator();
+        ImGui::Text("CAMERA POSITION");
+        ImGui::Separator();
+        ImGui::Text("x = %f y = %f z = %f", Globals::camera.getEye().x, Globals::camera.getEye().y, Globals::camera.getEye().z);
 
         // terrain gen controls
         ImGui::NewLine();
@@ -41,39 +46,39 @@ void UI::render(Terrain &terrain)
         ImGui::Separator();
 
         // height scale: vertical exaggeration of terrain
-        if (ImGui::SliderFloat("Height Scale", &terrain.perlinParameters.heightScale, 0.0f, 200.0f, "%.2f"))
+        if (ImGui::SliderFloat("Height Scale", &Globals::terrain->perlinParameters.heightScale, 0.0f, 200.0f, "%.2f"))
         {
-            terrain.setPerlinNoiseHeightValues();
+            Globals::terrain->setPerlinNoiseHeightValues();
         }
 
         // amplitude: strength of the base noise layer
-        if (ImGui::SliderFloat("Amplitude", &terrain.perlinParameters.amplitude, 0.1f, 50.0f, "%.2f"))
+        if (ImGui::SliderFloat("Amplitude", &Globals::terrain->perlinParameters.amplitude, 0.1f, 50.0f, "%.2f"))
         {
-            terrain.setPerlinNoiseHeightValues();
+            Globals::terrain->setPerlinNoiseHeightValues();
         }
 
         // frequency: how dense the noise pattern is (smaller = wider hills)
-        if (ImGui::SliderFloat("Frequency", &terrain.perlinParameters.frequency, 0.1f, 10.0f, "%.2f"))
+        if (ImGui::SliderFloat("Frequency", &Globals::terrain->perlinParameters.frequency, 0.1f, 10.0f, "%.2f"))
         {
-            terrain.setPerlinNoiseHeightValues();
+            Globals::terrain->setPerlinNoiseHeightValues();
         }
 
         // scale: how zoomed-in the noise looks (lower = broader features)
-        if (ImGui::SliderFloat("Scale", &terrain.perlinParameters.scale, 0.01f, 1.0f, "%.3f"))
+        if (ImGui::SliderFloat("Scale", &Globals::terrain->perlinParameters.scale, 0.01f, 1.0f, "%.3f"))
         {
-            terrain.setPerlinNoiseHeightValues();
+            Globals::terrain->setPerlinNoiseHeightValues();
         }
 
         // persistence: amplitude decay per octave (controls roughness)
-        if (ImGui::SliderFloat("Persistence", &terrain.perlinParameters.persistence, 0.1f, 1.0f, "%.2f"))
+        if (ImGui::SliderFloat("Persistence", &Globals::terrain->perlinParameters.persistence, 0.1f, 1.0f, "%.2f"))
         {
-            terrain.setPerlinNoiseHeightValues();
+            Globals::terrain->setPerlinNoiseHeightValues();
         }
 
         // octaves: number of noise layers (higher = more fine detail)
-        if (ImGui::SliderInt("Octaves", &terrain.perlinParameters.octaves, 1, 12))
+        if (ImGui::SliderInt("Octaves", &Globals::terrain->perlinParameters.octaves, 1, 12))
         {
-            terrain.setPerlinNoiseHeightValues();
+            Globals::terrain->setPerlinNoiseHeightValues();
         }
 
         // render wireframe

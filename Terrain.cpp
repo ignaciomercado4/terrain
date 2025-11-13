@@ -1,8 +1,11 @@
 #include "./Terrain.hpp"
 #define STB_PERLIN_IMPLEMENTATION
 #include "stb_perlin.h"
-
-#define STB_PERLIN_IMPLEMENTATION
+#include <cstdlib>
+#include <algorithm>
+#define GLM_ENABLE_EXPERIMENTAL
+#include "glm/glm.hpp"
+#include "glm/gtx/string_cast.hpp"
 
 Terrain::Terrain(int gridSize, float quadSize) : vbo(GL_ARRAY_BUFFER), ebo(GL_ELEMENT_ARRAY_BUFFER)
 {
@@ -149,13 +152,14 @@ void Terrain::setPerlinNoiseHeightValues()
             frequency *= 2.0f;
         }
 
-        float h = (total / maxValue + 1.0f) * 0.5f; 
+        float h = (total / maxValue + 1.0f) * 0.5f;
         vertex.position.y = h * perlinParameters.heightScale * perlinParameters.amplitude;
     }
 
     updateAllNormals();
     updateBuffers();
 
+    generateTrees(10);
     std::cout << "MESSAGE: Finished setting perlin noise generated terrain height values." << std::endl;
 }
 
@@ -188,9 +192,39 @@ void Terrain::updateAllNormals()
         v.normal = glm::length(v.normal) > 0.0001f ? glm::normalize(v.normal) : glm::vec3(0.0f, 1.0f, 0.0f);
 }
 
-
 void Terrain::draw()
 {
     vao.bind();
     glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0);
+}
+
+void Terrain::generateTrees(int maxTreeCount)
+{
+    srand(static_cast<unsigned>(time(0)));
+    int vertexCount = vertices.size();
+
+    for (int i = 0; i < maxTreeCount; i++)
+    {
+        int randomVertexIndex = rand() % vertexCount;
+        glm::vec3 position = vertices.at(randomVertexIndex).position;
+
+        bool duplicate = false;
+        for (const auto &tptr : trees)
+        {
+            if (tptr->getPosition() == position)
+            {
+                duplicate = true;
+                break;
+            }
+        }
+        if (duplicate)
+            continue;
+
+        auto tree = std::make_unique<Tree>();
+        tree->setPosition(glm::vec3(position.x, position.y + 0.5f, position.z));
+        tree->setRotation(glm::vec3(0.0f, rand() % 360, 0.0f));
+        trees.push_back(std::move(tree));
+    }
+
+    std::cout << "MESSAGE: Generated " << trees.size() << " trees.\n";
 }

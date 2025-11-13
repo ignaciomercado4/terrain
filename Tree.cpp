@@ -40,5 +40,6 @@ void Tree::render()
     shader.setMat4(Globals::camera.getProjectionMatrix(), "u_projection");
     shader.setInt(2, "u_texture");
 
+
     glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0);
 }
