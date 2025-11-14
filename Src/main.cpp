@@ -22,15 +22,12 @@
 int main()
 {
     Window window(1080, 1080, "Terrain");
+
     Globals::init();
+    Globals::resourceManager.init();
     Globals::terrain->setPerlinNoiseHeightValues();
 
     UI::init(window);
-
-    Shader testShader("./Resources/Shaders/test.vert", "./Resources/Shaders/test.frag");
-
-    Texture snowGrassTexture("./Resources/Textures/snow_grass.png");
-    Texture grassTexture("./Resources/Textures/grass.png");
 
     while (!glfwWindowShouldClose(window.getWindowPointer()))
     {
@@ -43,16 +40,17 @@ int main()
 
         glm::mat4 model(1.0f);
         Input::update(window, model);
-        testShader.use();
-        testShader.setMat4(Globals::camera.getProjectionMatrix(window.ratio), "u_projection");
-        testShader.setMat4(Globals::camera.getViewMatrix(), "u_view");
-        testShader.setMat4(model, "u_model");
-        testShader.setVec3(Globals::camera.getEye(), "u_viewPosition");
+        
+        Globals::resourceManager.getShader("terrain")->use();
+        Globals::resourceManager.getShader("terrain")->setMat4(Globals::camera.getProjectionMatrix(window.ratio), "u_projection");
+        Globals::resourceManager.getShader("terrain")->setMat4(Globals::camera.getViewMatrix(), "u_view");
+        Globals::resourceManager.getShader("terrain")->setMat4(model, "u_model");
+        Globals::resourceManager.getShader("terrain")->setVec3(Globals::camera.getEye(), "u_viewPosition");
 
-        snowGrassTexture.bindToUnit(0);
-        testShader.setInt(0, "u_snowGrassTexture");
-        grassTexture.bindToUnit(1);
-        testShader.setInt(1, "u_grassTexture");
+        Globals::resourceManager.getTexture("snow_grass.png")->bindToUnit(0);
+        Globals::resourceManager.getShader("terrain")->setInt(0, "u_snowGrassTexture");
+        Globals::resourceManager.getTexture("grassTexture.png")->bindToUnit(1);
+        Globals::resourceManager.getShader("terrain")->setInt(1, "u_grassTexture");
         
         if (Globals::isWireframe)
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);

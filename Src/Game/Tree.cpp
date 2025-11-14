@@ -8,6 +8,7 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <cassert>
+#include "../Misc/Globals.hpp"
 
 Tree::Tree() : GameObject("Tree"), vbo(GL_ARRAY_BUFFER), ebo(GL_ELEMENT_ARRAY_BUFFER)
 {
@@ -33,12 +34,13 @@ Tree::Tree() : GameObject("Tree"), vbo(GL_ARRAY_BUFFER), ebo(GL_ELEMENT_ARRAY_BU
 void Tree::render()
 {
     vao.bind();
-    shader.use();
-    texture.bindToUnit(2);
-    shader.setMat4(getModelMatrix(), "u_model");
-    shader.setMat4(Globals::camera.getViewMatrix(), "u_view");
-    shader.setMat4(Globals::camera.getProjectionMatrix(), "u_projection");
-    shader.setInt(2, "u_texture");
+    Globals::resourceManager.getShader("tree")->use();
+    Globals::resourceManager.getTexture("tree.png")->bindToUnit(2);
+    
+    Globals::resourceManager.getShader("tree")->setMat4(getModelMatrix(), "u_model");
+    Globals::resourceManager.getShader("tree")->setMat4(Globals::camera.getViewMatrix(), "u_view");
+    Globals::resourceManager.getShader("tree")->setMat4(Globals::camera.getProjectionMatrix(), "u_projection");
+    Globals::resourceManager.getShader("tree")->setInt(2, "u_texture");
 
 
     glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0);

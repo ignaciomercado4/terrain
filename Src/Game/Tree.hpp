@@ -12,13 +12,10 @@
 class Tree : public GameObject
 {
 private:
-    Texture texture = Texture("./Resources/Textures/tree.png");
     VAO vao;
     VBO vbo;
     VBO ebo;
-    Shader shader = Shader("./Resources/Shaders/tree.vert",
-                           "./Resources/Shaders/tree.frag");
-
+    
     const std::vector<Vertex> vertices = {
         {{-1.0f, -2.0f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
         {{1.0f, -2.0f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},

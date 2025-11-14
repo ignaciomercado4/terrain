@@ -7,9 +7,11 @@
 bool Globals::isWireframe = false;
 Camera Globals::camera;
 Terrain* Globals::terrain = nullptr;
+ResourceManager Globals::resourceManager;
 
 void Globals::init()
 {
-    camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f));
-    terrain = new Terrain(TERRAIN_GRID_SIZE, 2.0f / TERRAIN_QUAD_SIZE);
+    Globals::camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f));
+    Globals::terrain = new Terrain(TERRAIN_GRID_SIZE, 2.0f / TERRAIN_QUAD_SIZE);
+    Globals::resourceManager = ResourceManager();
 }

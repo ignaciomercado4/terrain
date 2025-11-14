@@ -40,7 +40,6 @@ void UI::render()
         ImGui::Text("x = %f y = %f z = %f", Globals::camera.getEye().x, Globals::camera.getEye().y, Globals::camera.getEye().z);
 
         // terrain gen controls
-        ImGui::NewLine();
         ImGui::Separator();
         ImGui::Text("PERLIN NOISE");
         ImGui::Separator();

@@ -56,7 +56,8 @@
         "forward_list": "cpp",
         "ratio": "cpp",
         "valarray": "cpp",
-        "ios": "cpp"
+        "ios": "cpp",
+        "filesystem": "cpp"
     },
     "C_Cpp.errorSquiggles": "enabled"
 }
