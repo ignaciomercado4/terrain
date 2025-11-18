@@ -12,6 +12,6 @@ ResourceManager Globals::resourceManager;
 void Globals::init()
 {
     Globals::camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f));
-    Globals::terrain = new Terrain(TERRAIN_GRID_SIZE, 2.0f / TERRAIN_QUAD_SIZE, 150);
+    Globals::terrain = new Terrain(TERRAIN_GRID_SIZE, 2.0f / TERRAIN_QUAD_SIZE, 10);
     Globals::resourceManager = ResourceManager();
 }

@@ -32,15 +32,18 @@ class Terrain
     VAO vao;
     VBO vbo;
     VBO ebo;
+
+    VBO grassInstanceVBO;
     
     void setBuffers();
     int treeCount;
-    void generateTrees(int maxTreeCount);
+    void generateTrees();
     
     public:
     Terrain(int gridSize, float quadSize, int treeCount);
     std::vector<std::unique_ptr<Tree>> trees;
     std::vector<std::unique_ptr<GrassPatch>> grassPatches;
+    std::vector<GrassBlade> grassInstances;
     
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;

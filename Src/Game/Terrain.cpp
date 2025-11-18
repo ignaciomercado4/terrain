@@ -1,5 +1,6 @@
 #include "./Terrain.hpp"
 #include "./GrassPatch.hpp"
+#include "../Misc/Globals.hpp"
 #define STB_PERLIN_IMPLEMENTATION
 #include "stb_perlin.h"
 #include <cstdlib>
@@ -8,7 +9,7 @@
 #include "glm/glm.hpp"
 #include "glm/gtx/string_cast.hpp"
 
-Terrain::Terrain(int gridSize, float quadSize, int _treeCount) : vbo(GL_ARRAY_BUFFER), ebo(GL_ELEMENT_ARRAY_BUFFER)
+Terrain::Terrain(int gridSize, float quadSize, int _treeCount) : vbo(GL_ARRAY_BUFFER), ebo(GL_ELEMENT_ARRAY_BUFFER), treeCount(_treeCount)
 {
     std::cout << "MESSAGE: Generating base terrain..." << std::endl;
 
@@ -66,8 +67,6 @@ Terrain::Terrain(int gridSize, float quadSize, int _treeCount) : vbo(GL_ARRAY_BU
 
     std::cout << "MESSAGE: " << gridSize << "x" << gridSize << " grid created with quad size of: " << quadSize << "." << std::endl;
     std::cout << "MESSAGE: Finished generating base terrain." << std::endl;
-
-    treeCount = _treeCount;
 }
 
 void Terrain::setBuffers()
@@ -159,10 +158,10 @@ void Terrain::setPerlinNoiseHeightValues()
         vertex.position.y = h * perlinParameters.heightScale * perlinParameters.amplitude;
     }
 
-    generateTrees(300);
+    generateTrees();
     updateAllNormals();
     updateBuffers();
-    
+
     for (int tri = 0; tri < indices.size(); tri += 3)
     {
         glm::vec3 a, b, c;
@@ -172,6 +171,38 @@ void Terrain::setPerlinNoiseHeightValues()
         auto g = std::make_unique<GrassPatch>(a, b, c, 20);
         grassPatches.push_back(std::move(g));
     }
+
+    for (auto &g : grassPatches)
+    {
+        for (auto &b : g->blades)
+        {
+            grassInstances.push_back({b.position,
+                                      b.scale,
+                                      b.type});
+        }
+    }
+
+    grassInstanceVBO.bind();
+
+    grassInstanceVBO.setBufferData(
+        grassInstances.size() * sizeof(GrassBlade),
+        grassInstances.data(),
+        GL_STATIC_DRAW);
+
+    vao.bind();
+    grassInstanceVBO.bind();
+
+    glEnableVertexAttribArray(4);
+    glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(GrassBlade), (void *)0);
+    glVertexAttribDivisor(4, 1);
+
+    glEnableVertexAttribArray(5);
+    glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, sizeof(GrassBlade), (void *)(sizeof(glm::vec3)));
+    glVertexAttribDivisor(5, 1);
+
+    glEnableVertexAttribArray(6);
+    glVertexAttribIPointer(6, 1, GL_INT, sizeof(GrassBlade), (void *)(2 * sizeof(glm::vec3)));
+    glVertexAttribDivisor(6, 1);
 }
 
 void Terrain::updateAllNormals()
@@ -209,7 +240,7 @@ void Terrain::render()
     glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0);
 }
 
-void Terrain::generateTrees(int maxTreeCount)
+void Terrain::generateTrees()
 {
     if (!trees.empty())
     {
@@ -219,7 +250,7 @@ void Terrain::generateTrees(int maxTreeCount)
     srand(static_cast<unsigned>(time(0)));
     int vertexCount = vertices.size();
 
-    for (int i = 0; i < maxTreeCount; i++)
+    for (int i = 0; i < treeCount; i++)
     {
         int randomVertexIndex = rand() % vertexCount;
         glm::vec3 position = vertices.at(randomVertexIndex).position;
@@ -255,8 +286,35 @@ void Terrain::renderTrees()
 
 void Terrain::renderGrass()
 {
-    for (auto &g : grassPatches)
-    {
-        g->renderNotInstanced();
-    }
+    vao.bind();
+    Globals::resourceManager.getShader("grass")->use();
+
+    Globals::resourceManager.getTexture("grass_blade_grass_1.png")->bindToUnit(0);
+    Globals::resourceManager.getTexture("grass_blade_grass_2.png")->bindToUnit(1);
+    Globals::resourceManager.getTexture("grass_blade_grass_3.png")->bindToUnit(2);
+    Globals::resourceManager.getTexture("grass_blade_grass_4.png")->bindToUnit(3);
+    Globals::resourceManager.getTexture("grass_blade_clover_1.png")->bindToUnit(4);
+    Globals::resourceManager.getTexture("grass_blade_clover_2.png")->bindToUnit(5);
+    Globals::resourceManager.getTexture("grass_blade_dandelion.png")->bindToUnit(6);
+    Globals::resourceManager.getTexture("grass_blade_yellow_flower.png")->bindToUnit(7);
+
+    Globals::resourceManager.getShader("grass")->setMat4(Globals::camera.getViewMatrix(), "u_view");
+    Globals::resourceManager.getShader("grass")->setMat4(Globals::camera.getProjectionMatrix(), "u_projection");
+    Globals::resourceManager.getShader("grass")->use();
+    Globals::resourceManager.getShader("grass")->setInt(0, "u_grass1");
+    Globals::resourceManager.getShader("grass")->setInt(1, "u_grass2");
+    Globals::resourceManager.getShader("grass")->setInt(2, "u_grass3");
+    Globals::resourceManager.getShader("grass")->setInt(3, "u_grass4");
+    Globals::resourceManager.getShader("grass")->setInt(4, "u_clover1");
+    Globals::resourceManager.getShader("grass")->setInt(5, "u_clover2");
+    Globals::resourceManager.getShader("grass")->setInt(6, "u_dandelion");
+    Globals::resourceManager.getShader("grass")->setInt(7, "u_yellowFlower");
+
+    glDrawElementsInstanced(
+        GL_TRIANGLES,
+        6, 
+        GL_UNSIGNED_INT,
+        0,
+        (GLsizei)grassInstances.size() 
+    );
 }

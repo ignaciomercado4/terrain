@@ -7,28 +7,42 @@
 #include "../Graphics/VBO.hpp"
 #include "../Graphics/Vertex.hpp"
 
+enum GrassBladeType
+{
+    GRASS_1,
+    GRASS_2,
+    GRASS_3,
+    GRASS_4,
+    CLOVER_1,
+    CLOVER_2,
+    DANDELION,
+    YELLOW_FLOWER
+};
+
+struct GrassBlade
+{
+    glm::vec3 position;
+    glm::vec3 scale;
+    GrassBladeType type;
+};
+
 class GrassPatch
 {
 private:
     glm::vec3 triangleVertices[3];
-    std::vector<glm::vec3> bladePositions;
     int maxBlades;
-    
     std::vector<Vertex> vertices = {
-        {{-1.0f, -2.0f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
-        {{1.0f, -2.0f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
-        {{1.0f, 2.0f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}, {0.0f, 0.0f, 1.0f}},
-        {{-1.0f, 2.0f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}, {0.0f, 0.0f, 1.0f}}};
+        {{-0.25f, 0.0f, 0.0f}, {1, 1, 1, 1}, {0, 0}, {0, 0, 1}},
+        {{0.25f, 0.0f, 0.0f}, {1, 1, 1, 1}, {1, 0}, {0, 0, 1}},
+        {{0.25f, 1.0f, 0.0f}, {1, 1, 1, 1}, {1, 1}, {0, 0, 1}},
+        {{-0.25f, 1.0f, 0.0f}, {1, 1, 1, 1}, {0, 1}, {0, 0, 1}}};
+
     std::vector<unsigned int> indices = {
         0, 1, 2, 2, 3, 0};
-    
-    VBO vbo;
-    VAO vao;
-    VBO ebo;
 
 public:
     GrassPatch(glm::vec3 a, glm::vec3 b, glm::vec3 c, int _maxBlades);
-    void renderNotInstanced();
+    std::vector<GrassBlade> blades;
 };
 
 #endif
