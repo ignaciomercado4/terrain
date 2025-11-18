@@ -35,13 +35,19 @@ void Tree::render()
 {
     vao.bind();
     Globals::resourceManager.getShader("tree")->use();
-    Globals::resourceManager.getTexture("tree.png")->bindToUnit(2);
-    
+    if (getPosition().y < 4.5f)
+    {
+        Globals::resourceManager.getTexture("tree.png")->bindToUnit(2);
+    }
+    else
+    {
+        Globals::resourceManager.getTexture("tree_brown.png")->bindToUnit(2);
+    }
+
     Globals::resourceManager.getShader("tree")->setMat4(getModelMatrix(), "u_model");
     Globals::resourceManager.getShader("tree")->setMat4(Globals::camera.getViewMatrix(), "u_view");
     Globals::resourceManager.getShader("tree")->setMat4(Globals::camera.getProjectionMatrix(), "u_projection");
     Globals::resourceManager.getShader("tree")->setInt(2, "u_texture");
-
 
     glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0);
 }

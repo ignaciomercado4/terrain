@@ -20,7 +20,7 @@ void ResourceManager::init()
         setShader(name);
     }
 }
-
+ 
 void ResourceManager::setTexture(const std::string &name)
 {
     auto t = std::make_unique<Texture>(textureFolder + name);

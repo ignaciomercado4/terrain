@@ -22,17 +22,14 @@
 int main()
 {
     Window window(1080, 1080, "Terrain");
-
     Globals::init();
     Globals::resourceManager.init();
     Globals::terrain->setPerlinNoiseHeightValues();
-
     UI::init(window);
 
     while (!glfwWindowShouldClose(window.getWindowPointer()))
     {
         Globals::terrain->updateBuffers();
-
 
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glEnable(GL_DEPTH_TEST);
@@ -49,7 +46,7 @@ int main()
 
         Globals::resourceManager.getTexture("snow_grass.png")->bindToUnit(0);
         Globals::resourceManager.getShader("terrain")->setInt(0, "u_snowGrassTexture");
-        Globals::resourceManager.getTexture("grassTexture.png")->bindToUnit(1);
+        Globals::resourceManager.getTexture("grass.png")->bindToUnit(1);
         Globals::resourceManager.getShader("terrain")->setInt(1, "u_grassTexture");
         
         if (Globals::isWireframe)
@@ -57,8 +54,9 @@ int main()
         else
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-        Globals::terrain->draw();
+        Globals::terrain->render();
         Globals::terrain->renderTrees();
+        Globals::terrain->renderGrass();
 
 
         UI::render();

@@ -1,4 +1,5 @@
 #include "./Terrain.hpp"
+#include "./GrassPatch.hpp"
 #define STB_PERLIN_IMPLEMENTATION
 #include "stb_perlin.h"
 #include <cstdlib>
@@ -7,7 +8,7 @@
 #include "glm/glm.hpp"
 #include "glm/gtx/string_cast.hpp"
 
-Terrain::Terrain(int gridSize, float quadSize) : vbo(GL_ARRAY_BUFFER), ebo(GL_ELEMENT_ARRAY_BUFFER)
+Terrain::Terrain(int gridSize, float quadSize, int _treeCount) : vbo(GL_ARRAY_BUFFER), ebo(GL_ELEMENT_ARRAY_BUFFER)
 {
     std::cout << "MESSAGE: Generating base terrain..." << std::endl;
 
@@ -65,6 +66,8 @@ Terrain::Terrain(int gridSize, float quadSize) : vbo(GL_ARRAY_BUFFER), ebo(GL_EL
 
     std::cout << "MESSAGE: " << gridSize << "x" << gridSize << " grid created with quad size of: " << quadSize << "." << std::endl;
     std::cout << "MESSAGE: Finished generating base terrain." << std::endl;
+
+    treeCount = _treeCount;
 }
 
 void Terrain::setBuffers()
@@ -156,11 +159,19 @@ void Terrain::setPerlinNoiseHeightValues()
         vertex.position.y = h * perlinParameters.heightScale * perlinParameters.amplitude;
     }
 
+    generateTrees(300);
     updateAllNormals();
     updateBuffers();
-
-    generateTrees(200);
-    std::cout << "MESSAGE: Finished setting perlin noise generated terrain height values." << std::endl;
+    
+    for (int tri = 0; tri < indices.size(); tri += 3)
+    {
+        glm::vec3 a, b, c;
+        a = vertices.at(indices.at(tri)).position;
+        b = vertices.at(indices.at(tri + 1)).position;
+        c = vertices.at(indices.at(tri + 2)).position;
+        auto g = std::make_unique<GrassPatch>(a, b, c, 20);
+        grassPatches.push_back(std::move(g));
+    }
 }
 
 void Terrain::updateAllNormals()
@@ -192,7 +203,7 @@ void Terrain::updateAllNormals()
         v.normal = glm::length(v.normal) > 0.0001f ? glm::normalize(v.normal) : glm::vec3(0.0f, 1.0f, 0.0f);
 }
 
-void Terrain::draw()
+void Terrain::render()
 {
     vao.bind();
     glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0);
@@ -236,8 +247,16 @@ void Terrain::generateTrees(int maxTreeCount)
 
 void Terrain::renderTrees()
 {
-    for (auto& t : trees)
+    for (auto &t : trees)
     {
         t->render();
+    }
+}
+
+void Terrain::renderGrass()
+{
+    for (auto &g : grassPatches)
+    {
+        g->renderNotInstanced();
     }
 }
