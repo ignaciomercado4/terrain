@@ -26,7 +26,7 @@ int main()
     Globals::resourceManager.init();
     Globals::terrain->setPerlinNoiseHeightValues();
     UI::init(window);
-
+    
     while (!glfwWindowShouldClose(window.getWindowPointer()))
     {
         Globals::terrain->updateBuffers();
@@ -56,7 +56,6 @@ int main()
 
         Globals::terrain->render();
         Globals::terrain->renderTrees();
-        Globals::terrain->renderGrass();
 
 
         UI::render();

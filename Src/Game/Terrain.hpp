@@ -10,7 +10,7 @@
 #include "../Graphics/VAO.hpp"
 #include "../Graphics/VBO.hpp"
 #include "./Tree.hpp"
-#include "./GrassPatch.hpp"
+#include "./Grass.hpp"
 #include <memory>
 
 struct perlinParams
@@ -38,12 +38,11 @@ class Terrain
     void setBuffers();
     int treeCount;
     void generateTrees();
+    Grass* grass = nullptr;
     
     public:
     Terrain(int gridSize, float quadSize, int treeCount);
     std::vector<std::unique_ptr<Tree>> trees;
-    std::vector<std::unique_ptr<GrassPatch>> grassPatches;
-    std::vector<GrassBlade> grassInstances;
     
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
@@ -53,9 +52,9 @@ class Terrain
     void updateBuffers();
     void setRandomHeightValues();
     void setPerlinNoiseHeightValues();
+    void populateVegetationInstances();
 
     void renderTrees();
-    void renderGrass();
     void render();
 };
 
