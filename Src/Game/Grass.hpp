@@ -9,7 +9,7 @@
 
 enum VegetationType
 {
-    GRASS_1
+    GRASS_1, GRASS_2, GRASS_3, GRASS_4, YELLOW_FLOWER, CLOVER_1, CLOVER_2
 };
 
 struct VegetationInstance

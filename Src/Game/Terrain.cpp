@@ -244,7 +244,7 @@ void Terrain::renderTrees()
 
 void Terrain::populateVegetationInstances()
 {
-    grass = std::make_unique<Grass>(3, vertices, indices);
+    grass = std::make_unique<Grass>(20, vertices, indices);
 }
 
 void Terrain::renderVegetation()
