@@ -38,7 +38,7 @@ class Terrain
     void setBuffers();
     int treeCount;
     void generateTrees();
-    Grass* grass = nullptr;
+    std::unique_ptr<Grass> grass;
     
     public:
     Terrain(int gridSize, float quadSize, int treeCount);
@@ -56,6 +56,7 @@ class Terrain
 
     void renderTrees();
     void render();
+    void renderVegetation();
 };
 
 #endif

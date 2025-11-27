@@ -7,10 +7,7 @@
 #include <iomanip>
 #include "./Graphics/Shader.hpp"
 #include "./Graphics/GLObject.hpp"
-#include "./Graphics/VAO.hpp"
-#include "./Graphics/VBO.hpp"
 #include "./Graphics/Window.hpp"
-#include "./Graphics/Vertex.hpp"
 #include "./Graphics/Texture.hpp"
 #include "./Game/Camera.hpp"
 #include "./Game/Input.hpp"
@@ -56,6 +53,7 @@ int main()
 
         Globals::terrain->render();
         Globals::terrain->renderTrees();
+        Globals::terrain->renderVegetation();
 
 
         UI::render();

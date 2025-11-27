@@ -4,6 +4,7 @@
 #include "../Misc/Common.hpp"
 #include "../Graphics/Vertex.hpp"
 #include "../Graphics/VAO.hpp"
+#include "../Graphics/VBO.hpp"
 #include <vector>
 
 enum VegetationType
@@ -22,6 +23,10 @@ class Grass
 {
 private:
     VAO vao;
+    VBO vbo;
+    VBO ebo;
+    unsigned int instanceVBO;
+
     std::vector<Vertex> vertices = {
         {{0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
         {{1.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}, {1.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
@@ -33,10 +38,11 @@ private:
     
     int maxInstancesPerTri;
     void populateTriangle(glm::vec3 a, glm::vec3 b, glm::vec3 c);
+    void setBuffers();
 
 public:
     std::vector<VegetationInstance> instances;
-    Grass(int instancesPerTriangle, std::vector<Vertex> terrainVerts, std::vector<unsigned int> terrainIndices);
+    Grass(int instancesPerTriangle, std::vector<Vertex>& terrainVerts, std::vector<unsigned int>& terrainIndices);
     void renderInstances();
 };
 
