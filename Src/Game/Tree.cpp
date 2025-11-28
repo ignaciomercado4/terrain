@@ -12,7 +12,7 @@
 
 Tree::Tree() : GameObject("Tree"), vbo(GL_ARRAY_BUFFER), ebo(GL_ELEMENT_ARRAY_BUFFER)
 {
-    setScale(glm::vec3(0.2f));
+    setScale(glm::vec3(0.4f));
     vao.bind();
     vbo.bind();
 
@@ -35,13 +35,17 @@ void Tree::render()
 {
     vao.bind();
     Globals::resourceManager.getShader("tree")->use();
-    if (getPosition().y < 4.5f)
+    if (getPosition().y < 3.0f)
     {
         Globals::resourceManager.getTexture("tree.png")->bindToUnit(2);
     }
-    else
+    else if (getPosition().y < 5.5f)
     {
         Globals::resourceManager.getTexture("tree_brown.png")->bindToUnit(2);
+    }
+    else
+    {
+        Globals::resourceManager.getTexture("tree_snow.png")->bindToUnit(2);
     }
 
     Globals::resourceManager.getShader("tree")->setMat4(getModelMatrix(), "u_model");

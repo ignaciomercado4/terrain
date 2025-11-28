@@ -9,12 +9,14 @@
 #include "./Graphics/GLObject.hpp"
 #include "./Graphics/Window.hpp"
 #include "./Graphics/Texture.hpp"
+#include "./Graphics/Cubemap.hpp"
 #include "./Game/Camera.hpp"
 #include "./Game/Input.hpp"
 #include "./Game/Terrain.hpp"
 #include "./Game/UI.hpp"
 #include "./Game/Tree.hpp"
 #include "./Misc/Globals.hpp"
+#include "./Misc/Utils.hpp"
 
 int main()
 {
@@ -23,17 +25,20 @@ int main()
     Globals::resourceManager.init();
     Globals::terrain->setPerlinNoiseHeightValues();
     UI::init(window);
+    Cubemap skybox;
     
     while (!glfwWindowShouldClose(window.getWindowPointer()))
     {
         Globals::terrain->updateBuffers();
+        Utils::updateTiming();
 
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glEnable(GL_DEPTH_TEST);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+        
         glm::mat4 model(1.0f);
         Input::update(window, model);
+        skybox.render();
         
         Globals::resourceManager.getShader("terrain")->use();
         Globals::resourceManager.getShader("terrain")->setMat4(Globals::camera.getProjectionMatrix(window.ratio), "u_projection");

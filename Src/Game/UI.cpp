@@ -27,12 +27,18 @@ void UI::render()
     if (ImGui::Begin("Terrain", nullptr, ImGuiWindowFlags_None))
     {
         ImGui::Separator();
+        ImGui::Text("RENDER DATA");
+        ImGui::Separator();
+
+        ImGui::Text("FPS: %.1f", Globals::fps);
+        ImGui::Text("Frame Time: %.3f ms", Globals::deltaTime * 1000.0f);
+
+        ImGui::Separator();
         ImGui::Text("TERRAIN DATA");
         ImGui::Separator();
 
         ImGui::Text("Terrain vertices: %li", Globals::terrain->vertices.size());
         ImGui::Text("Terrain indices: %li", Globals::terrain->indices.size());
-
 
         ImGui::Separator();
         ImGui::Text("CAMERA POSITION");

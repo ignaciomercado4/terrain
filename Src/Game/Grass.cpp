@@ -70,17 +70,22 @@ void Grass::populateTriangle(glm::vec3 a, glm::vec3 b, glm::vec3 c)
         float typeProbability = dist(rng);
 
         glm::vec3 p = a + u * (b - a) + v * (c - a);
-        glm::vec3 s = glm::vec3(0.03f, 0.05f, 0.03f);
+        glm::vec3 s = glm::vec3(0.05f, 0.08f, 0.05f);
 
         VegetationType t;
 
-        if (typeProbability < 0.05f)
+        if (typeProbability < 0.02f)
         {
             t = YELLOW_FLOWER;
         }
-        else if (typeProbability < 0.15f)
+        else if (typeProbability < 0.05f)
         {
             t = (dist(rng) < 0.5f) ? CLOVER_1 : CLOVER_2;
+        }
+        else if (typeProbability < 0.06)
+        {
+            t = (dist(rng) < 0.5f) ? BUSH_1 : BUSH_2;
+            s = glm::vec3(0.1, 0.16, 0.1);
         }
         else if (typeProbability < 0.30f)
         {
@@ -109,6 +114,7 @@ void Grass::renderInstances()
     vao.bind();
     Globals::resourceManager.getShader("grass")->use();
     Globals::resourceManager.getShader("grass")->setMat4(Globals::camera.getViewMatrix(), "u_view");
+    Globals::resourceManager.getShader("grass")->setVec3(Globals::camera.getEye(), "u_cameraPos");
     Globals::resourceManager.getShader("grass")->setMat4(Globals::camera.getProjectionMatrix(), "u_projection");
     Globals::resourceManager.getTexture("grass_blade_grass_1.png")->bindToUnit(3);
     Globals::resourceManager.getShader("grass")->setInt(3, "u_grassTexture1");
@@ -131,9 +137,16 @@ void Grass::renderInstances()
     Globals::resourceManager.getTexture("grass_blade_yellow_flower.png")->bindToUnit(9);
     Globals::resourceManager.getShader("grass")->setInt(9, "u_yellowFlowerTexture");
 
-    glDisable(GL_CULL_FACE);
+    Globals::resourceManager.getTexture("grass_blade_bush_1.png")->bindToUnit(10);
+    Globals::resourceManager.getShader("grass")->setInt(10, "u_bushTexture1");
 
-    std::cout << "Size of VegetationInstance: " << sizeof(VegetationInstance) << std::endl;
+    Globals::resourceManager.getTexture("grass_blade_bush_2.png")->bindToUnit(11);
+    Globals::resourceManager.getShader("grass")->setInt(11, "u_bushTexture2");
+
+    float maxCullDistance = 10.0f;
+    Globals::resourceManager.getShader("grass")->setFloat(maxCullDistance, "u_maxCullDistance");
+
+    glDisable(GL_CULL_FACE);
 
     glDrawElementsInstanced(
         GL_TRIANGLES,

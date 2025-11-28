@@ -23,6 +23,7 @@ public:
     void setMat4(glm::mat4 m, std::string name);
     void setInt(int i, std::string name);
     void setVec3(glm::vec3 v, std::string name);
+    void setFloat(float f, std::string name);
 };
 
 #endif

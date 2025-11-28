@@ -1,5 +1,6 @@
 #include "../Misc/Globals.hpp"
 #include "./Grass.hpp"
+#include "./Terrain.hpp"
 #define STB_PERLIN_IMPLEMENTATION
 #include "stb_perlin.h"
 #include <cstdlib>
@@ -8,7 +9,7 @@
 #include "glm/glm.hpp"
 #include "glm/gtx/string_cast.hpp"
 
-Terrain::Terrain(int gridSize, float quadSize, int _treeCount) : vbo(GL_ARRAY_BUFFER), ebo(GL_ELEMENT_ARRAY_BUFFER), treeCount(_treeCount)
+Terrain::Terrain(int _gridSize, float _quadSize, int _treeCount) : vbo(GL_ARRAY_BUFFER), ebo(GL_ELEMENT_ARRAY_BUFFER), treeCount(_treeCount), gridSize(_gridSize), quadSize(_quadSize)
 {
     std::cout << "MESSAGE: Generating base terrain..." << std::endl;
 
@@ -226,7 +227,7 @@ void Terrain::generateTrees()
             continue;
 
         auto tree = std::make_unique<Tree>();
-        tree->setPosition(glm::vec3(position.x, position.y + 0.4f, position.z));
+        tree->setPosition(glm::vec3(position.x, position.y + 0.65f, position.z));
         tree->setRotation(glm::vec3(0.0f, rand() % 360, 0.0f));
         trees.push_back(std::move(tree));
     }
@@ -254,3 +255,4 @@ void Terrain::renderVegetation()
         grass->renderInstances();
     }
 }
+

@@ -28,26 +28,29 @@ struct perlinParams
 // Toppa' the line
 class Terrain
 {
-    private:
+private:
     VAO vao;
     VBO vbo;
     VBO ebo;
 
     VBO grassInstanceVBO;
-    
+
+    float gridSize;
+    float quadSize;
+
     void setBuffers();
     int treeCount;
     void generateTrees();
     std::unique_ptr<Grass> grass;
-    
-    public:
-    Terrain(int gridSize, float quadSize, int treeCount);
+
+public:
+    Terrain(int _gridSize, float _quadSize, int _treeCount);
     std::vector<std::unique_ptr<Tree>> trees;
-    
+
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
     perlinParams perlinParameters;
-    
+
     void updateAllNormals();
     void updateBuffers();
     void setRandomHeightValues();

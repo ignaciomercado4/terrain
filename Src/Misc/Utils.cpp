@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include "./Utils.hpp"
+#include "./Globals.hpp"
 
 std::string Utils::loadFileContents(std::string path)
 {
@@ -45,4 +46,13 @@ bool Utils::isPointInsideTriangle(glm::vec3 p1, glm::vec3 p2, glm::vec3 p3, glm:
 
         return (wA >= -eps && wB >= -eps && wC >= -eps &&
             wA <= 1 + eps && wB <= 1 + eps && wC <= 1 + eps);
+}
+
+void Utils::updateTiming()
+{
+    float currentFrame = (float)glfwGetTime();
+    Globals::deltaTime = currentFrame - Globals::lastFrame;
+    Globals::lastFrame = currentFrame;
+
+    Globals::fps = 1.0f / Globals::deltaTime;
 }

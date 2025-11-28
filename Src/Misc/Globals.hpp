@@ -12,6 +12,9 @@ namespace Globals
     extern Terrain* terrain;
     extern ResourceManager resourceManager;
     void init();
+    extern float fps;
+    extern float deltaTime;
+    extern float lastFrame;
 };
 
 #endif

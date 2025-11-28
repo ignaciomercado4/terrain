@@ -98,7 +98,7 @@ void Shader::setInt(int i, std::string name)
     int location = glGetUniformLocation(ID, name.c_str());
     if (location == -1)
     {
-        std::cerr << "ERROR: Unable to locate uniform (Mat4) named: " << name << "\n";
+        std::cerr << "ERROR: Unable to locate uniform (Int) named: " << name << "\n";
         exit(1);
     }
     else
@@ -112,11 +112,25 @@ void Shader::setVec3(glm::vec3 v, std::string name)
     int location = glGetUniformLocation(ID, name.c_str());
     if (location == -1)
     {
-        std::cerr << "ERROR: Unable to locate uniform (Mat4) named: " << name << "\n";
+        std::cerr << "ERROR: Unable to locate uniform (Vec3) named: " << name << "\n";
         exit(1);
     }
     else
     {
         glUniform3fv(location, 1, &v[0]);
+    }
+}
+
+void Shader::setFloat(float f, std::string name)
+{
+    int location = glGetUniformLocation(ID, name.c_str());
+    if (location == -1)
+    {
+        std::cerr << "ERROR: Unable to locate uniform (Float) named: " << name << "\n";
+        exit(1);
+    }
+    else
+    {
+        glUniform1f(location, f);
     }
 }
