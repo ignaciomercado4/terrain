@@ -62,12 +62,12 @@ private:
         5, 1, 0};
 
     std::vector<std::string> faces = {
-        "./Resources/Cubemaps/right.jpg",
-        "./Resources/Cubemaps/left.jpg",
-        "./Resources/Cubemaps/top.jpg",
-        "./Resources/Cubemaps/bottom.jpg",
-        "./Resources/Cubemaps/front.jpg",
-        "./Resources/Cubemaps/back.jpg"};
+        "./Resources/Cubemaps/skybox_right.jpg",
+        "./Resources/Cubemaps/skybox_left.jpg",
+        "./Resources/Cubemaps/skybox_top.jpg",
+        "./Resources/Cubemaps/skybox_bottom.jpg",
+        "./Resources/Cubemaps/skybox_front.jpg",
+        "./Resources/Cubemaps/skybox_back.jpg"};
 
 public:
     Cubemap();

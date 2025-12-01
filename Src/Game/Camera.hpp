@@ -18,7 +18,7 @@ public:
            float _FOV = 80.0f);
 
     glm::mat4 getViewMatrix() const;
-    glm::mat4 getProjectionMatrix(float aspect = 1.0f) const;
+    glm::mat4 getProjectionMatrix(float ratio) const;
     glm::vec3 getEye() const { return eye; }
 
     void moveForward(float speed);

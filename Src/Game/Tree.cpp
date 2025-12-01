@@ -12,7 +12,7 @@
 
 Tree::Tree() : GameObject("Tree"), vbo(GL_ARRAY_BUFFER), ebo(GL_ELEMENT_ARRAY_BUFFER)
 {
-    setScale(glm::vec3(0.4f));
+    setScale(glm::vec3(0.8f));
     vao.bind();
     vbo.bind();
 
@@ -37,20 +37,20 @@ void Tree::render()
     Globals::resourceManager.getShader("tree")->use();
     if (getPosition().y < 3.0f)
     {
-        Globals::resourceManager.getTexture("tree.png")->bindToUnit(2);
+        Globals::resourceManager.getTexture("base_tree_green.png")->bindToUnit(2);
     }
     else if (getPosition().y < 5.5f)
     {
-        Globals::resourceManager.getTexture("tree_brown.png")->bindToUnit(2);
+        Globals::resourceManager.getTexture("base_tree_brown.png")->bindToUnit(2);
     }
     else
     {
-        Globals::resourceManager.getTexture("tree_snow.png")->bindToUnit(2);
+        Globals::resourceManager.getTexture("base_tree_snow.png")->bindToUnit(2);
     }
 
     Globals::resourceManager.getShader("tree")->setMat4(getModelMatrix(), "u_model");
     Globals::resourceManager.getShader("tree")->setMat4(Globals::camera.getViewMatrix(), "u_view");
-    Globals::resourceManager.getShader("tree")->setMat4(Globals::camera.getProjectionMatrix(), "u_projection");
+    Globals::resourceManager.getShader("tree")->setMat4(Globals::camera.getProjectionMatrix(Globals::window->ratio), "u_projection");
     Globals::resourceManager.getShader("tree")->setInt(2, "u_texture");
 
     glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0);

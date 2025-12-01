@@ -10,6 +10,7 @@
 #include "./Graphics/Window.hpp"
 #include "./Graphics/Texture.hpp"
 #include "./Graphics/Cubemap.hpp"
+#include "./Graphics/Model.hpp"
 #include "./Game/Camera.hpp"
 #include "./Game/Input.hpp"
 #include "./Game/Terrain.hpp"
@@ -20,36 +21,23 @@
 
 int main()
 {
-    Window window(1080, 1080, "Terrain");
     Globals::init();
     Globals::resourceManager.init();
     Globals::terrain->setPerlinNoiseHeightValues();
-    UI::init(window);
+    UI::init(*Globals::window);
     Cubemap skybox;
-    
-    while (!glfwWindowShouldClose(window.getWindowPointer()))
+    Model test("./Resources/Models/treasure_chest.obj");
+
+    while (!glfwWindowShouldClose(Globals::window->getWindowPointer()))
     {
-        Globals::terrain->updateBuffers();
         Utils::updateTiming();
 
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glEnable(GL_DEPTH_TEST);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
-        glm::mat4 model(1.0f);
-        Input::update(window, model);
+        Input::update(*Globals::window, Globals::terrain->model);
         skybox.render();
-        
-        Globals::resourceManager.getShader("terrain")->use();
-        Globals::resourceManager.getShader("terrain")->setMat4(Globals::camera.getProjectionMatrix(window.ratio), "u_projection");
-        Globals::resourceManager.getShader("terrain")->setMat4(Globals::camera.getViewMatrix(), "u_view");
-        Globals::resourceManager.getShader("terrain")->setMat4(model, "u_model");
-        Globals::resourceManager.getShader("terrain")->setVec3(Globals::camera.getEye(), "u_viewPosition");
-
-        Globals::resourceManager.getTexture("snow_grass.png")->bindToUnit(0);
-        Globals::resourceManager.getShader("terrain")->setInt(0, "u_snowGrassTexture");
-        Globals::resourceManager.getTexture("grass.png")->bindToUnit(1);
-        Globals::resourceManager.getShader("terrain")->setInt(1, "u_grassTexture");
         
         if (Globals::isWireframe)
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -59,11 +47,12 @@ int main()
         Globals::terrain->render();
         Globals::terrain->renderTrees();
         Globals::terrain->renderVegetation();
+        test.render(*Globals::resourceManager.getShader("model"));
 
 
         UI::render();
 
-        window.swapBuffersPollEvents();
+        Globals::window->swapBuffersPollEvents();
     }
 
     glfwTerminate();

@@ -11,42 +11,42 @@
 #include "./Terrain.hpp"
 #include "../Misc/Globals.hpp"
 
-float SPEED = 0.05f;
-float ROTATION_SPEED = 2.0f;
+float SPEED = 5.0f;
+float ROTATION_SPEED = 40.0f;
 
 void Input::update(Window &window, glm::mat4 model)
 {
     if (glfwGetKey(window.getWindowPointer(), GLFW_KEY_W) == GLFW_PRESS)
     {
-        Globals::camera.moveForward(SPEED);
+        Globals::camera.moveForward(SPEED * Globals::deltaTime);
     }
     if (glfwGetKey(window.getWindowPointer(), GLFW_KEY_S) == GLFW_PRESS)
     {
-        Globals::camera.moveBackward(SPEED);
+        Globals::camera.moveBackward(SPEED * Globals::deltaTime);
     }
     if (glfwGetKey(window.getWindowPointer(), GLFW_KEY_A) == GLFW_PRESS)
     {
-        Globals::camera.moveLeft(SPEED);
+        Globals::camera.moveLeft(SPEED * Globals::deltaTime);
     }
     if (glfwGetKey(window.getWindowPointer(), GLFW_KEY_D) == GLFW_PRESS)
     {
-        Globals::camera.moveRight(SPEED);
+        Globals::camera.moveRight(SPEED * Globals::deltaTime);
     }
     if (glfwGetKey(window.getWindowPointer(), GLFW_KEY_UP) == GLFW_PRESS)
     {
-        Globals::camera.addPitch(ROTATION_SPEED);
+        Globals::camera.addPitch(ROTATION_SPEED * Globals::deltaTime);
     }
     if (glfwGetKey(window.getWindowPointer(), GLFW_KEY_DOWN) == GLFW_PRESS)
     {
-        Globals::camera.addPitch(-ROTATION_SPEED);
+        Globals::camera.addPitch(-ROTATION_SPEED * Globals::deltaTime);
     }
     if (glfwGetKey(window.getWindowPointer(), GLFW_KEY_RIGHT) == GLFW_PRESS)
     {
-        Globals::camera.addYaw(ROTATION_SPEED);
+        Globals::camera.addYaw(ROTATION_SPEED * Globals::deltaTime);
     }
     if (glfwGetKey(window.getWindowPointer(), GLFW_KEY_LEFT) == GLFW_PRESS)
     {
-        Globals::camera.addYaw(-ROTATION_SPEED);
+        Globals::camera.addYaw(-ROTATION_SPEED * Globals::deltaTime);
     }
     if (glfwGetKey(window.getWindowPointer(), GLFW_KEY_ESCAPE) == GLFW_PRESS)
     {
@@ -68,7 +68,7 @@ void Input::update(Window &window, glm::mat4 model)
         glm::vec4 rayClip = glm::vec4(rayNDS.x, rayNDS.y, -1.0, 1.0);
 
         // transform ray to camera eye space
-        glm::vec4 rayEye = glm::inverse(Globals::camera.getProjectionMatrix()) * rayClip;
+        glm::vec4 rayEye = glm::inverse(Globals::camera.getProjectionMatrix(window.ratio)) * rayClip;
         rayEye = glm::vec4(rayEye.x, rayEye.y, -1.0, 0.0);
 
         // transform ray to world space and normalize
@@ -122,6 +122,7 @@ void Input::update(Window &window, glm::mat4 model)
                                 Globals::terrain->vertices[i1].position.y += 0.01f;
                                 Globals::terrain->vertices[i2].position.y += 0.01f;
                                 Globals::terrain->updateAllNormals();
+                                Globals::terrain->updateBuffers();
                             }
                         }
                     }

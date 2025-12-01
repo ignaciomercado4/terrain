@@ -4,9 +4,11 @@
 #include "stb_image.h"
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <algorithm>
 
 Texture::Texture(std::string path)
 {
+    type = getTexturePathFromPath(path);
     glGenTextures(1, &ID);
     glBindTexture(GL_TEXTURE_2D, ID);
 
@@ -16,7 +18,6 @@ Texture::Texture(std::string path)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
 
     int w, h, nrChannels;
     stbi_set_flip_vertically_on_load(1);
@@ -36,8 +37,7 @@ Texture::Texture(std::string path)
     stbi_image_free(data);
 
     std::cout << "MESSAGE: Texture loaded: " << path
-          << " (" << w << "x" << h << ", channels=" << nrChannels << ")\n";
-
+              << " (" << w << "x" << h << ", channels=" << nrChannels << ")\n";
 }
 
 void Texture::bind()
@@ -59,4 +59,32 @@ void Texture::unbind()
 Texture::~Texture()
 {
     glDeleteTextures(1, &ID);
+}
+
+TextureType Texture::getTexturePathFromPath(std::string path)
+{
+    std::string filename = path.substr(path.find_last_of("/\\") + 1);
+
+    size_t pos = filename.find("_");
+    if (pos == std::string::npos)
+    {
+        return TextureType::UNKNOWN;
+    }
+
+    std::string prefix = filename.substr(0, pos);
+
+    std::transform(prefix.begin(), prefix.end(), prefix.begin(), ::tolower);
+
+    if (prefix == "diffuse")
+        return TextureType::DIFFUSE;
+    if (prefix == "specular")
+        return TextureType::SPECULAR;
+    if (prefix == "normal")
+        return TextureType::NORMAL;
+    if (prefix == "emissive")
+        return TextureType::EMISSIVE;
+    if (prefix == "base")
+        return TextureType::EMISSIVE;
+
+    return TextureType::UNKNOWN;
 }

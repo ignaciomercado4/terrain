@@ -87,6 +87,7 @@ void Terrain::setBuffers()
 
     ebo.bind();
     ebo.setBufferData(indices.size() * sizeof(unsigned int), indices.data(), GL_DYNAMIC_DRAW);
+    std::cout << "Setting buffahs\n";
 }
 
 void Terrain::updateBuffers()
@@ -104,6 +105,8 @@ void Terrain::updateBuffers()
     vao.enableVAR(2);
     vao.setVertexAttributes(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(9 * sizeof(float)));
     vao.enableVAR(3);
+
+    std::cout << "Updating Buffahs\n";
 }
 
 void Terrain::setRandomHeightValues()
@@ -195,6 +198,17 @@ void Terrain::updateAllNormals()
 
 void Terrain::render()
 {
+    model = glm::mat4(1.0f);
+    Globals::resourceManager.getShader("terrain")->use();
+    Globals::resourceManager.getShader("terrain")->setMat4(Globals::camera.getProjectionMatrix(Globals::window->ratio), "u_projection"); // here
+    Globals::resourceManager.getShader("terrain")->setMat4(Globals::camera.getViewMatrix(), "u_view");
+    Globals::resourceManager.getShader("terrain")->setMat4(model, "u_model");
+    Globals::resourceManager.getShader("terrain")->setVec3(Globals::camera.getEye(), "u_viewPosition");
+
+    Globals::resourceManager.getTexture("base_snow_grass_tile.png")->bindToUnit(0);
+    Globals::resourceManager.getShader("terrain")->setInt(0, "u_snowGrassTexture");
+    Globals::resourceManager.getTexture("base_grass_tile.png")->bindToUnit(1);
+    Globals::resourceManager.getShader("terrain")->setInt(1, "u_grassTexture");
     vao.bind();
     glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0);
 }
@@ -227,7 +241,7 @@ void Terrain::generateTrees()
             continue;
 
         auto tree = std::make_unique<Tree>();
-        tree->setPosition(glm::vec3(position.x, position.y + 0.65f, position.z));
+        tree->setPosition(glm::vec3(position.x, position.y + 1.5f, position.z));
         tree->setRotation(glm::vec3(0.0f, rand() % 360, 0.0f));
         trees.push_back(std::move(tree));
     }
@@ -245,7 +259,7 @@ void Terrain::renderTrees()
 
 void Terrain::populateVegetationInstances()
 {
-    grass = std::make_unique<Grass>(20, vertices, indices);
+    grass = std::make_unique<Grass>(15, vertices, indices);
 }
 
 void Terrain::renderVegetation()
@@ -255,4 +269,3 @@ void Terrain::renderVegetation()
         grass->renderInstances();
     }
 }
-

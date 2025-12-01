@@ -4,7 +4,7 @@
 #include "./Window.hpp"
 #include "./GLObject.hpp"
 
-Window::Window(int _width, int _height, const char* _title)
+Window::Window(int _width, int _height, const char *_title)
 {
     if (!glfwInit())
     {
@@ -26,6 +26,7 @@ Window::Window(int _width, int _height, const char* _title)
     }
 
     glfwMakeContextCurrent(window);
+    // glfwSwapInterval(0); // no cap
 
     glewExperimental = 1;
     if (glewInit() != GLEW_OK)
@@ -37,15 +38,18 @@ Window::Window(int _width, int _height, const char* _title)
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-
     GLObject::checkContext();
-    ratio = (float)_width / (float)_height;
-    width = _width;
-    height = _height;
+    int fbw, fbh;
+    glfwGetFramebufferSize(window, &fbw, &fbh);
+    glViewport(0, 0, fbw, fbh);
+
+    ratio = (float)fbw / (float)fbh;
+    width = fbw;
+    height = fbh;
     title = _title;
 }
 
-GLFWwindow* Window::getWindowPointer()
+GLFWwindow *Window::getWindowPointer()
 {
     return window;
 }

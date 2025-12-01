@@ -46,6 +46,7 @@ private:
 public:
     Terrain(int _gridSize, float _quadSize, int _treeCount);
     std::vector<std::unique_ptr<Tree>> trees;
+    glm::mat4 model;
 
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;

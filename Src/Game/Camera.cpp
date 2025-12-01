@@ -19,9 +19,9 @@ glm::mat4 Camera::getViewMatrix() const
     return glm::lookAt(eye, eye + front, up);
 }
 
-glm::mat4 Camera::getProjectionMatrix(float aspect) const
+glm::mat4 Camera::getProjectionMatrix(float ratio) const
 {
-    return glm::perspective(glm::radians(FOV), (float)aspect, 0.1f, 100.0f);
+    return glm::perspective(glm::radians(FOV), (float)ratio, 0.1f, 100.0f);
 }
 
 void Camera::moveForward(float speed)

@@ -55,7 +55,7 @@ void Cubemap::render()
     Globals::resourceManager.getShader("skybox")->use();
     glm::mat4 view = glm::mat4(glm::mat3(Globals::camera.getViewMatrix()));
     Globals::resourceManager.getShader("skybox")->setMat4(view, "u_view");
-    Globals::resourceManager.getShader("skybox")->setMat4(Globals::camera.getProjectionMatrix(), "u_projection");
+    Globals::resourceManager.getShader("skybox")->setMat4(Globals::camera.getProjectionMatrix(Globals::window->ratio), "u_projection");
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
 
     Globals::resourceManager.getShader("skybox")->setInt(0, "u_skyboxTexture");

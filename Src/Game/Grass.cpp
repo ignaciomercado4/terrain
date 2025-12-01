@@ -67,41 +67,51 @@ void Grass::populateTriangle(glm::vec3 a, glm::vec3 b, glm::vec3 c)
             v = 1.0f - v;
         }
 
-        float typeProbability = dist(rng);
+        std::uniform_real_distribution<float> distVegetationProbability(0.0f, 100.0f);
+        float typeProbability = distVegetationProbability(rng);
 
         glm::vec3 p = a + u * (b - a) + v * (c - a);
-        glm::vec3 s = glm::vec3(0.05f, 0.08f, 0.05f);
+        
+        // little height offset
+        p.y += 0.035f;
+        
+        glm::vec3 s = glm::vec3(0.025f, 0.025f, 0.025f);
 
         VegetationType t;
 
-        if (typeProbability < 0.02f)
+        if (typeProbability < 0.2f)
         {
             t = YELLOW_FLOWER;
         }
-        else if (typeProbability < 0.05f)
+        else if (typeProbability < 0.3f)
         {
-            t = (dist(rng) < 0.5f) ? CLOVER_1 : CLOVER_2;
+            t = (dist(rng) < 50.0f) ? CLOVER_1 : CLOVER_2;
         }
-        else if (typeProbability < 0.06)
+        else if (typeProbability < 0.4f)
         {
-            t = (dist(rng) < 0.5f) ? BUSH_1 : BUSH_2;
-            s = glm::vec3(0.1, 0.16, 0.1);
+            t = (dist(rng) < 50.0f) ? BUSH_1 : BUSH_2;
+            s = glm::vec3(0.4f, 0.2f, 0.4f);
+            p.y += 0.25f;
         }
-        else if (typeProbability < 0.30f)
+        else if (typeProbability < 30.0f)
         {
             t = GRASS_1;
+            s.y *= 2.0f;
         }
-        else if (typeProbability < 0.50f)
+        else if (typeProbability < 50.0f)
         {
             t = GRASS_2;
+            s *= 1.5f;
         }
-        else if (typeProbability < 0.70f)
+        else if (typeProbability < 70.0f)
         {
             t = GRASS_3;
+            s.y *= 2.0f;
         }
         else
         {
             t = GRASS_4;
+            s *= 1.5f;
         }
 
         VegetationInstance ins = {p, s, t};
@@ -115,32 +125,32 @@ void Grass::renderInstances()
     Globals::resourceManager.getShader("grass")->use();
     Globals::resourceManager.getShader("grass")->setMat4(Globals::camera.getViewMatrix(), "u_view");
     Globals::resourceManager.getShader("grass")->setVec3(Globals::camera.getEye(), "u_cameraPos");
-    Globals::resourceManager.getShader("grass")->setMat4(Globals::camera.getProjectionMatrix(), "u_projection");
-    Globals::resourceManager.getTexture("grass_blade_grass_1.png")->bindToUnit(3);
+    Globals::resourceManager.getShader("grass")->setMat4(Globals::camera.getProjectionMatrix(Globals::window->ratio), "u_projection");
+    Globals::resourceManager.getTexture("base_grass_blade_grass_1.png")->bindToUnit(3);
     Globals::resourceManager.getShader("grass")->setInt(3, "u_grassTexture1");
 
-    Globals::resourceManager.getTexture("grass_blade_grass_2.png")->bindToUnit(4);
+    Globals::resourceManager.getTexture("base_grass_blade_grass_2.png")->bindToUnit(4);
     Globals::resourceManager.getShader("grass")->setInt(4, "u_grassTexture2");
 
-    Globals::resourceManager.getTexture("grass_blade_grass_3.png")->bindToUnit(5);
+    Globals::resourceManager.getTexture("base_grass_blade_grass_3.png")->bindToUnit(5);
     Globals::resourceManager.getShader("grass")->setInt(5, "u_grassTexture3");
 
-    Globals::resourceManager.getTexture("grass_blade_grass_4.png")->bindToUnit(6);
+    Globals::resourceManager.getTexture("base_grass_blade_grass_4.png")->bindToUnit(6);
     Globals::resourceManager.getShader("grass")->setInt(6, "u_grassTexture4");
 
-    Globals::resourceManager.getTexture("grass_blade_clover_1.png")->bindToUnit(7);
+    Globals::resourceManager.getTexture("base_grass_blade_clover_1.png")->bindToUnit(7);
     Globals::resourceManager.getShader("grass")->setInt(7, "u_cloverTexture1");
 
-    Globals::resourceManager.getTexture("grass_blade_clover_2.png")->bindToUnit(8);
+    Globals::resourceManager.getTexture("base_grass_blade_clover_2.png")->bindToUnit(8);
     Globals::resourceManager.getShader("grass")->setInt(8, "u_cloverTexture2");
 
-    Globals::resourceManager.getTexture("grass_blade_yellow_flower.png")->bindToUnit(9);
+    Globals::resourceManager.getTexture("base_grass_blade_yellow_flower.png")->bindToUnit(9);
     Globals::resourceManager.getShader("grass")->setInt(9, "u_yellowFlowerTexture");
 
-    Globals::resourceManager.getTexture("grass_blade_bush_1.png")->bindToUnit(10);
+    Globals::resourceManager.getTexture("base_grass_blade_bush_1.png")->bindToUnit(10);
     Globals::resourceManager.getShader("grass")->setInt(10, "u_bushTexture1");
 
-    Globals::resourceManager.getTexture("grass_blade_bush_2.png")->bindToUnit(11);
+    Globals::resourceManager.getTexture("base_grass_blade_bush_2.png")->bindToUnit(11);
     Globals::resourceManager.getShader("grass")->setInt(11, "u_bushTexture2");
 
     float maxCullDistance = 10.0f;

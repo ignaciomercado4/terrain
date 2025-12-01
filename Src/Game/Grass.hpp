@@ -9,7 +9,15 @@
 
 enum VegetationType
 {
-    GRASS_1, GRASS_2, GRASS_3, GRASS_4, YELLOW_FLOWER, CLOVER_1, CLOVER_2, BUSH_1, BUSH_2
+    GRASS_1,
+    GRASS_2,
+    GRASS_3,
+    GRASS_4,
+    YELLOW_FLOWER,
+    CLOVER_1,
+    CLOVER_2,
+    BUSH_1,
+    BUSH_2
 };
 
 struct VegetationInstance
@@ -28,21 +36,28 @@ private:
     unsigned int instanceVBO;
 
     std::vector<Vertex> vertices = {
-        {{0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
-        {{1.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}, {1.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
-        {{1.0f, 1.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, 0.0f, 1.0f}},
-        {{0.0f, 1.0f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 1.0f}, {0.0f, 0.0f, 1.0f}}};
+        {{-1.0f, -2.0f, 0.0f}, {1, 1, 1, 1}, {0.0f, 0.0f}, {0, 0, 1}},
+        {{1.0f, -2.0f, 0.0f}, {1, 1, 1, 1}, {1.0f, 0.0f}, {0, 0, 1}},
+        {{1.0f, 2.0f, 0.0f}, {1, 1, 1, 1}, {1.0f, 1.0f}, {0, 0, 1}},
+        {{-1.0f, 2.0f, 0.0f}, {1, 1, 1, 1}, {0.0f, 1.0f}, {0, 0, 1}},
+
+        {{0.0f, -2.0f, -1.0f}, {1, 1, 1, 1}, {0.0f, 0.0f}, {1, 0, 0}},
+        {{0.0f, -2.0f, 1.0f}, {1, 1, 1, 1}, {1.0f, 0.0f}, {1, 0, 0}},
+        {{0.0f, 2.0f, 1.0f}, {1, 1, 1, 1}, {1.0f, 1.0f}, {1, 0, 0}},
+        {{0.0f, 2.0f, -1.0f}, {1, 1, 1, 1}, {0.0f, 1.0f}, {1, 0, 0}}};
 
     std::vector<unsigned int> indices = {
-        0, 1, 2, 0, 2, 3};
-    
+        0, 1, 2, 0, 2, 3, 
+        4, 5, 6, 4, 6, 7  
+    };
+
     int maxInstancesPerTri;
     void populateTriangle(glm::vec3 a, glm::vec3 b, glm::vec3 c);
     void setBuffers();
 
 public:
     std::vector<VegetationInstance> instances;
-    Grass(int instancesPerTriangle, std::vector<Vertex>& terrainVerts, std::vector<unsigned int>& terrainIndices);
+    Grass(int instancesPerTriangle, std::vector<Vertex> &terrainVerts, std::vector<unsigned int> &terrainIndices);
     void renderInstances();
 };
 
