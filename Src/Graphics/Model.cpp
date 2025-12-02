@@ -102,8 +102,6 @@ void Model::loadOBJ(std::string path)
                 continue;
             }
 
-            // Triangulación fan:
-            // (0, i-1, i)
             for (int i = 1; i < tokens.size() - 1; ++i)
             {
                 std::string tri[3] = {tokens[0], tokens[i], tokens[i + 1]};
