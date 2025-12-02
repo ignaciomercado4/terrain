@@ -2,26 +2,25 @@
 #define MODEL_HPP
 
 #include "./Mesh.hpp"
-#include <vector>
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-#include "./Shader.hpp"
+#include <string>
+
+struct FaceIndex {
+    int v, vt, vn;
+};
 
 class Model
 {
 private:
     std::vector<Mesh> meshes;
-    void loadModel(std::string path);
-    void processNode(aiNode *node, const aiScene *scene);
-    Mesh processMesh(aiMesh *mesh, const aiScene *scene);
-    std::vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type);
-    std::string directory;
-    std::vector<Texture> loadedTextures;
+    void loadOBJ(std::string path);
+    std::vector<glm::vec3> temp_positions;
+    std::vector<glm::vec2> temp_uvs;
+    std::vector<glm::vec3> temp_normals;
+    FaceIndex parseFaceLine(std::string line);
 
 public:
-    void render(Shader& shader);
     Model(std::string path);
+    void render(Shader &shader);
 };
 
 #endif

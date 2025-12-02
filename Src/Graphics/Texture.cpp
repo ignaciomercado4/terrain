@@ -8,6 +8,14 @@
 
 Texture::Texture(std::string path)
 {
+    if (path.empty())
+    {
+        ID = 0;
+        type = TextureType::UNKNOWN;
+        std::cout << "WARNING: Empty texture path, skipping." << std::endl;
+        return;
+    }
+
     type = getTexturePathFromPath(path);
     glGenTextures(1, &ID);
     glBindTexture(GL_TEXTURE_2D, ID);
@@ -37,7 +45,13 @@ Texture::Texture(std::string path)
     stbi_image_free(data);
 
     std::cout << "MESSAGE: Texture loaded: " << path
-              << " (" << w << "x" << h << ", channels=" << nrChannels << ")\n";
+              << " (type: " << (int)type << ", " << w << "x" << h << ", channels=" << nrChannels << ")\n";
+}
+
+Texture::Texture()
+{
+    ID = 0;
+    type = TextureType::UNKNOWN;
 }
 
 void Texture::bind()

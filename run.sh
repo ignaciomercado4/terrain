@@ -13,7 +13,7 @@ SRC="./Src/main.cpp \
 
 echo "BUILD: Compiling..."
 
-g++ -std=c++17 $SRC -o $APP \
+g++ -std=c++2a $SRC -o $APP \
 -I/usr/local/include \
 -I/usr/include \
 -L/usr/local/lib \

@@ -1,125 +1,187 @@
 #include "./Model.hpp"
+#include "./Mesh.hpp"
+#include "../Misc/Globals.hpp"
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <string_view>
 
 Model::Model(std::string path)
 {
-    loadModel(path);
+    loadOBJ(path);
 }
 
-void Model::render(Shader& shader)
+void Model::loadOBJ(std::string path)
 {
-    for (unsigned int i = 0; i < meshes.size(); i++)
+    temp_positions.clear();
+    temp_uvs.clear();
+    temp_normals.clear();
+
+    std::ifstream file(path);
+    if (!file.good())
     {
-        meshes[i].render(shader);
-    }
-}
-
-
-void Model::loadModel(std::string path)
-{
-    Assimp::Importer importer;
-    const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
-
-    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) 
-    {
-        std::cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << std::endl;
-        return;
+        std::cout << "ERROR: OBJ model not found at path: " << path << std::endl;
+        exit(-1);
     }
 
-    directory = path.substr(0, path.find_last_of('/'));
-
-    processNode(scene->mRootNode, scene);
-}
-
-void Model::processNode(aiNode *node, const aiScene *scene)
-{
-    for (unsigned int i = 0; i < node->mNumMeshes; i++)
+    std::string str;
+    int line = 0;
+    std::vector<Vertex> finalVertices;
+    std::vector<unsigned int> finalIndices;
+    while (std::getline(file, str))
     {
-        aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
-        meshes.push_back(processMesh(mesh, scene));
-    }
-    for (unsigned int i = 0; i < node->mNumChildren; i++)
-    {
-        processNode(node->mChildren[i], scene);
-    }
-}
+        line++;
+        // ignore comments and empty lines
+        if (str.empty() || str.starts_with("#"))
+            continue;
 
-Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
-{
-    std::vector<Vertex> vertices;
-    std::vector<unsigned int> indices;
-    std::vector<Texture> textures;
-
-    // vertices
-    for (unsigned int i = 0; i < mesh->mNumVertices; i++)
-    {
-        Vertex vertex;
-
-        // position
-        vertex.position = {
-            mesh->mVertices[i].x,
-            mesh->mVertices[i].y,
-            mesh->mVertices[i].z
-        };
-
-        // normal
-        if (mesh->HasNormals())
+        // vertex
+        if (str.starts_with("v "))
         {
-            vertex.normal = {
-                mesh->mNormals[i].x,
-                mesh->mNormals[i].y,
-                mesh->mNormals[i].z
-            };
+            glm::vec3 pos;
+            int params = sscanf(str.c_str(), "v %f %f %f", &pos.x, &pos.y, &pos.z);
+            if (params >= 3)
+            {
+                temp_positions.push_back(pos);
+            }
+            else
+            {
+                std::cout << "WARNING: invalid v line " << "(" << line << ")" << "at model: " << path << std::endl;
+            }
+        }
+        // vertex uv
+        else if (str.starts_with("vt "))
+        {
+            glm::vec2 uv;
+            float w;
+            int params = sscanf(str.c_str(), "vt %f %f %f", &uv.x, &uv.y, &w);
+
+            if (params >= 2)
+            {
+                temp_uvs.push_back(uv);
+            }
+            else
+            {
+                std::cout << "WARNING: invalid vt line " << "(" << line << ")" << "at model: " << path << std::endl;
+            }
         }
 
-        // UV
-        if (mesh->mTextureCoords[0])
+        // vertex normals
+        else if (str.starts_with("vn "))
         {
-            vertex.uv = {
-                mesh->mTextureCoords[0][i].x,
-                mesh->mTextureCoords[0][i].y
-            };
+            glm::vec3 n;
+            int params = sscanf(str.c_str(), "vn %f %f %f", &n.x, &n.y, &n.z);
+
+            if (params >= 3)
+            {
+                temp_normals.push_back(n);
+            }
+            else
+            {
+                std::cout << "WARNING: invalid vn line " << "(" << line << ")" << "at model: " << path << std::endl;
+            }
         }
-        else vertex.uv = {0.0f, 0.0f};
+        // face
+        else if (str.starts_with("f "))
+        {
+            std::string faceLine = str.substr(2);
 
-        vertices.push_back(vertex);
+            std::vector<std::string> tokens;
+            {
+                std::stringstream ss(faceLine);
+                std::string tok;
+                while (ss >> tok)
+                    tokens.push_back(tok);
+            }
+
+            if (tokens.size() < 3)
+            {
+                std::cout << "ERROR: cara inválida en línea "
+                          << line << ": " << str << std::endl;
+                continue;
+            }
+
+            // Triangulación fan:
+            // (0, i-1, i)
+            for (int i = 1; i < tokens.size() - 1; ++i)
+            {
+                std::string tri[3] = {tokens[0], tokens[i], tokens[i + 1]};
+
+                for (int k = 0; k < 3; ++k)
+                {
+                    FaceIndex fi = parseFaceLine(tri[k]);
+
+                    int posIndex = fi.v > 0 ? fi.v - 1 : -1;
+                    int uvIndex = fi.vt > 0 ? fi.vt - 1 : -1;
+                    int norIndex = fi.vn > 0 ? fi.vn - 1 : -1;
+
+                    Vertex vert{};
+
+                    if (posIndex >= 0 && posIndex < temp_positions.size())
+                        vert.position = temp_positions[posIndex];
+                    else
+                        vert.position = glm::vec3(0);
+
+                    if (uvIndex >= 0 && uvIndex < temp_uvs.size())
+                        vert.uv = temp_uvs[uvIndex];
+                    else
+                        vert.uv = glm::vec2(0);
+
+                    if (norIndex >= 0 && norIndex < temp_normals.size())
+                        vert.normal = temp_normals[norIndex];
+                    else
+                        vert.normal = glm::vec3(0, 1, 0);
+
+                    vert.color = glm::vec4(1.0f);
+
+                    finalIndices.push_back(finalVertices.size());
+                    finalVertices.push_back(vert);
+                }
+            }
+        }
     }
-
-    for (unsigned int i = 0; i < mesh->mNumFaces; i++)
-    {
-        aiFace face = mesh->mFaces[i];
-        for (unsigned int j = 0; j < face.mNumIndices; j++)
-            indices.push_back(face.mIndices[j]);
-    }
-
-    aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-
-    auto diffuse = loadMaterialTextures(material, aiTextureType_DIFFUSE);
-    auto specular = loadMaterialTextures(material, aiTextureType_SPECULAR);
-    auto normals = loadMaterialTextures(material, aiTextureType_NORMALS);
-
-    textures.insert(textures.end(), diffuse.begin(), diffuse.end());
-    textures.insert(textures.end(), specular.begin(), specular.end());
-    textures.insert(textures.end(), normals.begin(), normals.end());
-
-    return Mesh(vertices, indices, textures);
+    meshes.clear();
+    meshes.emplace_back(finalIndices, finalVertices, std::vector<Texture>{});
 }
 
-
-std::vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type)
+FaceIndex Model::parseFaceLine(std::string line)
 {
-    std::vector<Texture> textures;
+    FaceIndex fi = {-1, -1, -1};
 
-    for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
+    if (line.find('/') != std::string::npos)
     {
-        aiString str;
-        mat->GetTexture(type, i, &str);
+        int v = 0, vt = 0, vn = 0;
 
-        std::string fullPath = directory + "/" + std::string(str.C_Str());
-
-        Texture tex(fullPath);
-
-        textures.push_back(tex);
+        if (sscanf(line.c_str(), "%d/%d/%d", &v, &vt, &vn) == 3)
+        {
+            fi.v = v;
+            fi.vt = vt;
+            fi.vn = vn;
+        }
+        else if (sscanf(line.c_str(), "%d//%d", &v, &vn) == 2)
+        {
+            fi.v = v;
+            fi.vn = vn;
+        }
+        else if (sscanf(line.c_str(), "%d/%d", &v, &vt) == 2)
+        {
+            fi.v = v;
+            fi.vt = vt;
+        }
+    }
+    else
+    {
+        fi.v = std::stoi(line);
     }
 
-    return textures;
+    return fi;
+}
+
+void Model::render(Shader &shader)
+{
+    for (auto &m : meshes)
+    {
+        m.render(shader);
+    }
 }

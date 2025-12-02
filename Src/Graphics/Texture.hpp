@@ -4,7 +4,8 @@
 #include <iostream>
 #include "./GLObject.hpp"
 
-enum class TextureType {
+enum class TextureType
+{
     DIFFUSE,
     SPECULAR,
     NORMAL,
@@ -13,15 +14,15 @@ enum class TextureType {
     UNKNOWN
 };
 
-
 class Texture : public GLObject
 {
 private:
-    unsigned int ID;
     TextureType getTexturePathFromPath(std::string path);
 
 public:
+    unsigned int ID;
     Texture(std::string path);
+    Texture();
     void bind();
     void bindToUnit(unsigned int unit);
     void unbind();

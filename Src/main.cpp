@@ -19,6 +19,7 @@
 #include "./Misc/Globals.hpp"
 #include "./Misc/Utils.hpp"
 
+
 int main()
 {
     Globals::init();
@@ -26,7 +27,7 @@ int main()
     Globals::terrain->setPerlinNoiseHeightValues();
     UI::init(*Globals::window);
     Cubemap skybox;
-    Model test("./Resources/Models/treasure_chest.obj");
+    Model model("./Resources/Models/Axe/axe.obj");
 
     while (!glfwWindowShouldClose(Globals::window->getWindowPointer()))
     {
@@ -35,10 +36,10 @@ int main()
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glEnable(GL_DEPTH_TEST);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        
+
         Input::update(*Globals::window, Globals::terrain->model);
         skybox.render();
-        
+
         if (Globals::isWireframe)
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         else
@@ -47,8 +48,7 @@ int main()
         Globals::terrain->render();
         Globals::terrain->renderTrees();
         Globals::terrain->renderVegetation();
-        test.render(*Globals::resourceManager.getShader("model"));
-
+        model.render(*Globals::resourceManager.getShader("model"));
 
         UI::render();
 

@@ -87,7 +87,6 @@ void Terrain::setBuffers()
 
     ebo.bind();
     ebo.setBufferData(indices.size() * sizeof(unsigned int), indices.data(), GL_DYNAMIC_DRAW);
-    std::cout << "Setting buffahs\n";
 }
 
 void Terrain::updateBuffers()
@@ -211,6 +210,7 @@ void Terrain::render()
     Globals::resourceManager.getShader("terrain")->setInt(1, "u_grassTexture");
     vao.bind();
     glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0);
+    vao.unbind();
 }
 
 void Terrain::generateTrees()

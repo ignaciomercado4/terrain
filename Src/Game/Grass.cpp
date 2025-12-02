@@ -71,10 +71,10 @@ void Grass::populateTriangle(glm::vec3 a, glm::vec3 b, glm::vec3 c)
         float typeProbability = distVegetationProbability(rng);
 
         glm::vec3 p = a + u * (b - a) + v * (c - a);
-        
+
         // little height offset
         p.y += 0.035f;
-        
+
         glm::vec3 s = glm::vec3(0.025f, 0.025f, 0.025f);
 
         VegetationType t;
@@ -164,4 +164,5 @@ void Grass::renderInstances()
         GL_UNSIGNED_INT,
         0,
         instances.size());
+    vao.unbind();
 }
