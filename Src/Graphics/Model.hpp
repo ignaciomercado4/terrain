@@ -3,6 +3,7 @@
 
 #include "./Mesh.hpp"
 #include <string>
+#include <memory>
 
 struct FaceIndex {
     int v, vt, vn;
@@ -11,7 +12,7 @@ struct FaceIndex {
 class Model
 {
 private:
-    std::vector<Mesh> meshes;
+    std::vector<std::unique_ptr<Mesh>> meshes;
     void loadOBJ(std::string path);
     std::vector<glm::vec3> temp_positions;
     std::vector<glm::vec2> temp_uvs;

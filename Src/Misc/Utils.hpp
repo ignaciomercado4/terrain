@@ -8,6 +8,7 @@ class Utils
 {
     private:
     public:
+    static void checkGLError(const char* context);
     static std::string loadFileContents(std::string path);
     static bool isPointInsideTriangle(glm::vec3 p1, glm::vec3 p2, glm::vec3 p3, glm::vec3 point);
     static void updateTiming();

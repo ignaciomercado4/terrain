@@ -1,11 +1,16 @@
 #include "./Model.hpp"
 #include "./Mesh.hpp"
+#include <glm/glm.hpp>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/string_cast.hpp>
 #include "../Misc/Globals.hpp"
+#include "../Misc/Utils.hpp"
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <string>
 #include <string_view>
+#include <memory>
 
 Model::Model(std::string path)
 {
@@ -25,65 +30,79 @@ void Model::loadOBJ(std::string path)
         exit(-1);
     }
 
+    meshes.clear();
+
+    std::vector<Vertex> curVertices;
+    std::vector<unsigned int> curIndices;
+
+    auto flushMesh = [&]()
+    {
+        if (!curVertices.empty())
+        {
+            meshes.emplace_back(std::make_unique<Mesh>(
+                curIndices,
+                curVertices,
+                std::vector<Texture>{}));
+
+            curVertices.clear();
+            curIndices.clear();
+        }
+    };
+
     std::string str;
     int line = 0;
-    std::vector<Vertex> finalVertices;
-    std::vector<unsigned int> finalIndices;
+
     while (std::getline(file, str))
     {
         line++;
-        // ignore comments and empty lines
-        if (str.empty() || str.starts_with("#"))
-            continue;
 
-        // vertex
+        if (str.empty() || str.starts_with("#"))
+        {
+            continue;
+        }
+
+        if (str.starts_with("o ") || str.starts_with("g "))
+        {
+            if (!curIndices.empty())
+                flushMesh();
+
+            continue;
+        }
+
+        if (str.starts_with("usemtl "))
+        {
+            continue;
+        }
+
         if (str.starts_with("v "))
         {
             glm::vec3 pos;
-            int params = sscanf(str.c_str(), "v %f %f %f", &pos.x, &pos.y, &pos.z);
-            if (params >= 3)
+            if (sscanf(str.c_str(), "v %f %f %f", &pos.x, &pos.y, &pos.z) == 3)
             {
                 temp_positions.push_back(pos);
             }
-            else
-            {
-                std::cout << "WARNING: invalid v line " << "(" << line << ")" << "at model: " << path << std::endl;
-            }
+            continue;
         }
-        // vertex uv
-        else if (str.starts_with("vt "))
+
+        if (str.starts_with("vt "))
         {
             glm::vec2 uv;
             float w;
             int params = sscanf(str.c_str(), "vt %f %f %f", &uv.x, &uv.y, &w);
-
             if (params >= 2)
-            {
                 temp_uvs.push_back(uv);
-            }
-            else
-            {
-                std::cout << "WARNING: invalid vt line " << "(" << line << ")" << "at model: " << path << std::endl;
-            }
+            continue;
         }
 
-        // vertex normals
-        else if (str.starts_with("vn "))
+        if (str.starts_with("vn "))
         {
             glm::vec3 n;
-            int params = sscanf(str.c_str(), "vn %f %f %f", &n.x, &n.y, &n.z);
-
-            if (params >= 3)
-            {
+            if (sscanf(str.c_str(), "vn %f %f %f", &n.x, &n.y, &n.z) == 3)
                 temp_normals.push_back(n);
-            }
-            else
-            {
-                std::cout << "WARNING: invalid vn line " << "(" << line << ")" << "at model: " << path << std::endl;
-            }
+            continue;
         }
-        // face
-        else if (str.starts_with("f "))
+
+        if (str.starts_with("f "))
         {
             std::string faceLine = str.substr(2);
 
@@ -97,8 +116,7 @@ void Model::loadOBJ(std::string path)
 
             if (tokens.size() < 3)
             {
-                std::cout << "ERROR: cara inválida en línea "
-                          << line << ": " << str << std::endl;
+                std::cout << "ERROR: invalid face at line " << line << std::endl;
                 continue;
             }
 
@@ -110,37 +128,26 @@ void Model::loadOBJ(std::string path)
                 {
                     FaceIndex fi = parseFaceLine(tri[k]);
 
-                    int posIndex = fi.v > 0 ? fi.v - 1 : -1;
-                    int uvIndex = fi.vt > 0 ? fi.vt - 1 : -1;
-                    int norIndex = fi.vn > 0 ? fi.vn - 1 : -1;
+                    Vertex v{};
 
-                    Vertex vert{};
+                    int pos = fi.v - 1;
+                    int uv = fi.vt - 1;
+                    int nor = fi.vn - 1;
 
-                    if (posIndex >= 0 && posIndex < temp_positions.size())
-                        vert.position = temp_positions[posIndex];
-                    else
-                        vert.position = glm::vec3(0);
+                    v.position = (pos >= 0 && pos < temp_positions.size()) ? temp_positions[pos] : glm::vec3(0);
+                    v.uv = (uv >= 0 && uv < temp_uvs.size()) ? temp_uvs[uv] : glm::vec2(0);
+                    v.normal = (nor >= 0 && nor < temp_normals.size()) ? temp_normals[nor] : glm::vec3(0, 1, 0);
 
-                    if (uvIndex >= 0 && uvIndex < temp_uvs.size())
-                        vert.uv = temp_uvs[uvIndex];
-                    else
-                        vert.uv = glm::vec2(0);
+                    v.color = glm::vec4(1.0);
 
-                    if (norIndex >= 0 && norIndex < temp_normals.size())
-                        vert.normal = temp_normals[norIndex];
-                    else
-                        vert.normal = glm::vec3(0, 1, 0);
-
-                    vert.color = glm::vec4(1.0f);
-
-                    finalIndices.push_back(finalVertices.size());
-                    finalVertices.push_back(vert);
+                    curIndices.push_back(curVertices.size());
+                    curVertices.push_back(v);
                 }
             }
         }
     }
-    meshes.clear();
-    meshes.emplace_back(finalIndices, finalVertices, std::vector<Texture>{});
+
+    flushMesh();
 }
 
 FaceIndex Model::parseFaceLine(std::string line)
@@ -178,8 +185,17 @@ FaceIndex Model::parseFaceLine(std::string line)
 
 void Model::render(Shader &shader)
 {
-    for (auto &m : meshes)
+    for (int i = meshes.size() - 1; i >= 0; i--)
     {
-        m.render(shader);
+
+        Mesh &mesh = *meshes.at(i);
+
+        shader.use();
+
+        float r = (i % 3 == 0) ? 1.0f : 0.4f;
+        float g = (i % 3 == 1) ? 1.0f : 0.4f;
+        float b = (i % 3 == 2) ? 1.0f : 0.4f;
+
+        mesh.render(shader);
     }
 }

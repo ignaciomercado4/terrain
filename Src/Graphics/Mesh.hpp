@@ -12,19 +12,20 @@
 class Mesh
 {
 private:
-    std::vector<unsigned int> indices;
-    std::vector<Vertex> vertices;
-    std::vector<Texture> textures;
+    void setBuffers();
+
+public:
     VAO vao;
     VBO vbo;
+    std::vector<Texture> textures;
     VBO ebo;
-    void setBuffers();
-public:
+    std::vector<unsigned int> indices;
+    std::vector<Vertex> vertices;
     Mesh(
         std::vector<unsigned int> _indices,
         std::vector<Vertex> _vertices,
         std::vector<Texture> _textures);
-    void render(Shader& shader);
+    void render(Shader &shader);
 };
 
 #endif

@@ -1,8 +1,9 @@
 #version 450 core
 
+uniform vec3 u_debugColor;
 out vec4 fragmentColor;
 
 void main()
 {
-    fragmentColor = vec4(0.36, 0.87, 0.0, 1.0);
+    fragmentColor = vec4(u_debugColor, 1.0f);
 }

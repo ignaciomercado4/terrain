@@ -19,7 +19,6 @@
 #include "./Misc/Globals.hpp"
 #include "./Misc/Utils.hpp"
 
-
 int main()
 {
     Globals::init();
@@ -27,7 +26,7 @@ int main()
     Globals::terrain->setPerlinNoiseHeightValues();
     UI::init(*Globals::window);
     Cubemap skybox;
-    Model model("./Resources/Models/Axe/axe.obj");
+    Model model("./Resources/Models/Test/untitled.obj");
 
     while (!glfwWindowShouldClose(Globals::window->getWindowPointer()))
     {
@@ -48,6 +47,7 @@ int main()
         Globals::terrain->render();
         Globals::terrain->renderTrees();
         Globals::terrain->renderVegetation();
+
         model.render(*Globals::resourceManager.getShader("model"));
 
         UI::render();
