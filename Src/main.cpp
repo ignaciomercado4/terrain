@@ -26,7 +26,7 @@ int main()
     Globals::terrain->setPerlinNoiseHeightValues();
     UI::init(*Globals::window);
     Cubemap skybox;
-    Model model("./Resources/Models/Test/untitled.obj");
+    Model model("./Resources/Models/Deer/deer1.obj");
 
     while (!glfwWindowShouldClose(Globals::window->getWindowPointer()))
     {
@@ -47,7 +47,6 @@ int main()
         Globals::terrain->render();
         Globals::terrain->renderTrees();
         Globals::terrain->renderVegetation();
-
         model.render(*Globals::resourceManager.getShader("model"));
 
         UI::render();

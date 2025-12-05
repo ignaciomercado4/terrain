@@ -104,8 +104,6 @@ void Terrain::updateBuffers()
     vao.enableVAR(2);
     vao.setVertexAttributes(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(9 * sizeof(float)));
     vao.enableVAR(3);
-
-    std::cout << "Updating Buffahs\n";
 }
 
 void Terrain::setRandomHeightValues()

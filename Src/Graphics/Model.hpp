@@ -5,7 +5,8 @@
 #include <string>
 #include <memory>
 
-struct FaceIndex {
+struct FaceIndex
+{
     int v, vt, vn;
 };
 
@@ -18,6 +19,8 @@ private:
     std::vector<glm::vec2> temp_uvs;
     std::vector<glm::vec3> temp_normals;
     FaceIndex parseFaceLine(std::string line);
+    std::map<std::string, Material> materials; 
+    std::string currentMaterialName = "";      
 
 public:
     Model(std::string path);

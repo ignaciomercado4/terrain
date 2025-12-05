@@ -15,6 +15,7 @@
 Model::Model(std::string path)
 {
     loadOBJ(path);
+    std::cout << "MESSAGE: Loaded OBJ model at path:" << path << std::endl;
 }
 
 void Model::loadOBJ(std::string path)
@@ -39,10 +40,22 @@ void Model::loadOBJ(std::string path)
     {
         if (!curVertices.empty())
         {
+            Material mat;
+            bool hasMat = false;
+
+            if (!currentMaterialName.empty() &&
+                materials.contains(currentMaterialName))
+            {
+                mat = materials[currentMaterialName];
+                hasMat = true;
+            }
+
             meshes.emplace_back(std::make_unique<Mesh>(
                 curIndices,
                 curVertices,
-                std::vector<Texture>{}));
+                std::vector<Texture>{},
+                mat
+                ));
 
             curVertices.clear();
             curIndices.clear();
@@ -69,8 +82,19 @@ void Model::loadOBJ(std::string path)
             continue;
         }
 
+        if (str.starts_with("mtllib "))
+        {
+            std::string mtlFile = str.substr(7);
+            materials = MaterialLoader::loadMTL(Utils::getDirectory(path) + "/" + mtlFile, Utils::getDirectory(path));
+            continue;
+        }
+
         if (str.starts_with("usemtl "))
         {
+            if (!curIndices.empty())
+                flushMesh();
+
+            currentMaterialName = str.substr(7);
             continue;
         }
 
@@ -191,10 +215,6 @@ void Model::render(Shader &shader)
         Mesh &mesh = *meshes.at(i);
 
         shader.use();
-
-        float r = (i % 3 == 0) ? 1.0f : 0.4f;
-        float g = (i % 3 == 1) ? 1.0f : 0.4f;
-        float b = (i % 3 == 2) ? 1.0f : 0.4f;
 
         mesh.render(shader);
     }

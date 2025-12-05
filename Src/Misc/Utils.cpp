@@ -74,3 +74,24 @@ void Utils::checkGLError(const char* context) {
         std::cout << "OpenGL error in " << context << ": " << error << " (0x" << std::hex << err << ")" << std::dec << std::endl;
     }
 }
+
+std::string Utils::getDirectory(std::string path)
+{
+     
+    size_t pos1 = path.find_last_of('/');
+    size_t pos2 = path.find_last_of('\\');
+
+    size_t pos = std::string::npos;
+
+    if (pos1 != std::string::npos && pos2 != std::string::npos)
+        pos = std::max(pos1, pos2);
+    else if (pos1 != std::string::npos)
+        pos = pos1;
+    else if (pos2 != std::string::npos)
+        pos = pos2;
+
+    if (pos == std::string::npos)
+        return "."; 
+
+    return path.substr(0, pos);
+}

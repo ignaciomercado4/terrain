@@ -9,6 +9,9 @@ Ks 0.000000 0.000000 0.000000
 Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
+map_Kd diffuse_deer-antlers.png
+bump normal_deer-antlers.png
+
 illum 1
 
 newmtl Body
@@ -20,6 +23,8 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 1
+map_Kd diffuse_deer-body.png
+bump normal_deer-body.png
 
 newmtl Eye
 Ns 225.000000
@@ -40,6 +45,8 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 1
+map_Kd diffuse_deer-head.png
+bump normal_deer-head.png
 
 newmtl Material.001
 Ns 225.000000

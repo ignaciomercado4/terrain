@@ -4,7 +4,7 @@
 #include <sstream>
 #include <string>
 
-std::map<std::string, Material> MaterialLoader::loadMTL(const std::string &path)
+std::map<std::string, Material> MaterialLoader::loadMTL(const std::string &path, const std::string &dir)
 {
     std::ifstream file(path);
     if (!file.good())
@@ -76,13 +76,32 @@ std::map<std::string, Material> MaterialLoader::loadMTL(const std::string &path)
         }
         else if (line.rfind("map_Kd ", 0) == 0)
         {
-            currentMaterial.diffuseMap = Texture(line.substr(7));
+            currentMaterial.diffuseMap = std::make_shared<Texture>(dir + "/" + line.substr(7));
             currentMaterial.hasDiffuse = true;
         }
         else if (line.rfind("map_Ks ", 0) == 0)
         {
-            currentMaterial.specularMap = Texture(line.substr(7));
+            currentMaterial.specularMap = std::make_shared<Texture>(dir + "/" + line.substr(7));
             currentMaterial.hasSpecular = true;
+        }
+        else if (line.rfind("bump ", 0) == 0)
+        {
+            std::string tex = line.substr(5);
+            tex.erase(0, tex.find_first_not_of(" \t"));
+
+            currentMaterial.bumpMap = std::make_shared<Texture>(dir + "/" + tex);
+            currentMaterial.hasBump = true;
+        }
+
+        else if (line.rfind("map_d ", 0) == 0)
+        {
+            currentMaterial.transparencyMap = std::make_shared<Texture>(dir + "/" + line.substr(7));
+            currentMaterial.hasTransparency = true;
+        }
+        else if (line.rfind("map_Ke ", 0) == 0)
+        {
+            currentMaterial.emissiveMap = std::make_shared<Texture>(dir + "/" + line.substr(7));
+            currentMaterial.hasEmissive = true;
         }
     }
 
