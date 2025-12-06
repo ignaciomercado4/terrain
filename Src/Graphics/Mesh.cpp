@@ -51,7 +51,10 @@ void Mesh::render(Shader &shader)
     shader.use();
     shader.setMat4(Globals::camera.getProjectionMatrix(Globals::window->ratio), "u_projection");
     shader.setMat4(Globals::camera.getViewMatrix(), "u_view");
-    shader.setMat4(glm::mat4(1.0f), "u_model");
+    glm::mat4 model(1.0f);
+    model = glm::translate(model, glm::vec3(15.0f, 0.0f, 4.0f));
+    model = glm::scale(model, glm::vec3(0.2f));
+    shader.setMat4(model, "u_model");
     shader.setVec3(Globals::camera.getEye(), "u_viewPos");
     shader.setVec3(glm::vec3(15.0f, 50.0f, 15.0f), "u_lightPos");
     shader.setVec3(glm::vec3(0.65f, 0.73f, 0.71f), "u_lightColor");

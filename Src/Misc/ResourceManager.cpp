@@ -19,8 +19,21 @@ void ResourceManager::init()
         std::string name = std::filesystem::path(dirEntry).stem().string();
         setShader(name);
     }
+
+    for (const auto &dirEntry : std::filesystem::recursive_directory_iterator(modelFolder))
+    {
+
+        std::string extension = std::filesystem::path(dirEntry).extension().string();
+        if (extension == ".obj")
+        {
+            std::string name = std::filesystem::path(dirEntry).stem().string();
+            std::string path = std::filesystem::path(dirEntry).string();
+
+            setModel(path, name);
+        }
+    }
 }
- 
+
 void ResourceManager::setTexture(const std::string &name)
 {
     auto t = std::make_unique<Texture>(textureFolder + name);
@@ -34,10 +47,16 @@ void ResourceManager::setShader(const std::string &name)
     shaders.insert({name, std::move(s)});
 }
 
+void ResourceManager::setModel(const std::string &path, const std::string &name)
+{
+    std::cout << "Set model received path: " << path << std::endl;
+    auto m = std::make_unique<Model>(path);
+    models.insert({name, std::move(m)});
+}
+
 Texture *ResourceManager::getTexture(const std::string &name) const
 {
     auto it = textures.find(name);
-
     if (it != textures.end())
     {
         return it->second.get();
@@ -50,12 +69,23 @@ Texture *ResourceManager::getTexture(const std::string &name) const
 Shader *ResourceManager::getShader(const std::string &name) const
 {
     auto it = shaders.find(name);
-
     if (it != shaders.end())
     {
         return it->second.get();
     }
 
     std::cout << "ERROR: Shader named '" << name << "' not found in ResourceManager." << std::endl;
+    return nullptr;
+}
+
+Model *ResourceManager::getModel(const std::string &name) const
+{
+    auto it = models.find(name);
+    if (it != models.end())
+    {
+        return it->second.get();
+    }
+
+    std::cout << "ERROR: Model named '" << name << "' not found in ResourceManager." << std::endl;
     return nullptr;
 }

@@ -47,7 +47,7 @@ int main()
         Globals::terrain->render();
         Globals::terrain->renderTrees();
         Globals::terrain->renderVegetation();
-        model.render(*Globals::resourceManager.getShader("model"));
+        Globals::resourceManager.getModel("deer1")->render(*Globals::resourceManager.getShader("model"));
 
         UI::render();
 
