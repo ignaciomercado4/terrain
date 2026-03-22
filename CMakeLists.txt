@@ -1,0 +1,37 @@
+cmake_minimum_required(VERSION 3.15)
+project(terrain)
+
+set(CMAKE_CXX_STANDARD 20)
+
+
+file(GLOB SRC
+    Src/*.cpp
+    Src/Game/*.cpp
+    Src/Graphics/*.cpp
+    Src/Misc/*.cpp
+    Vendor/imgui-1.92.4/*.cpp
+    Vendor/imgui-1.92.4/backends/imgui_impl_glfw.cpp
+    Vendor/imgui-1.92.4/backends/imgui_impl_opengl3.cpp
+)
+
+add_executable(terrain ${SRC})
+
+
+target_include_directories(terrain PRIVATE
+    Vendor/stb
+    Vendor/imgui-1.92.4
+    Vendor/imgui-1.92.4/backends
+)
+
+
+find_package(OpenGL REQUIRED)
+find_package(glfw3 REQUIRED)
+find_package(GLEW REQUIRED)
+
+target_link_libraries(terrain
+    OpenGL::GL
+    glfw
+    GLEW::GLEW
+    assimp
+    dl
+)
