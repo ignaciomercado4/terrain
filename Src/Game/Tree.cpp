@@ -33,26 +33,29 @@ Tree::Tree() : GameObject("Tree"), vbo(GL_ARRAY_BUFFER), ebo(GL_ELEMENT_ARRAY_BU
 
 void Tree::render()
 {
-    vao.bind();
-    Globals::resourceManager.getShader("tree")->use();
-    if (getPosition().y < 3.0f)
+    if (getActive())
     {
-        Globals::resourceManager.getTexture("base_tree_green.png")->bindToUnit(2);
-    }
-    else if (getPosition().y < 5.5f)
-    {
-        Globals::resourceManager.getTexture("base_tree_brown.png")->bindToUnit(2);
-    }
-    else
-    {
-        Globals::resourceManager.getTexture("base_tree_snow.png")->bindToUnit(2);
-    }
+        vao.bind();
+        Globals::resourceManager.getShader("tree")->use();
+        if (getPosition().y < 3.0f)
+        {
+            Globals::resourceManager.getTexture("base_tree_green.png")->bindToUnit(2);
+        }
+        else if (getPosition().y < 5.5f)
+        {
+            Globals::resourceManager.getTexture("base_tree_brown.png")->bindToUnit(2);
+        }
+        else
+        {
+            Globals::resourceManager.getTexture("base_tree_snow.png")->bindToUnit(2);
+        }
 
-    Globals::resourceManager.getShader("tree")->setMat4(getModelMatrix(), "u_model");
-    Globals::resourceManager.getShader("tree")->setMat4(Globals::camera.getViewMatrix(), "u_view");
-    Globals::resourceManager.getShader("tree")->setMat4(Globals::camera.getProjectionMatrix(Globals::window->ratio), "u_projection");
-    Globals::resourceManager.getShader("tree")->setInt(2, "u_texture");
+        Globals::resourceManager.getShader("tree")->setMat4(getModelMatrix(), "u_model");
+        Globals::resourceManager.getShader("tree")->setMat4(Globals::camera.getViewMatrix(), "u_view");
+        Globals::resourceManager.getShader("tree")->setMat4(Globals::camera.getProjectionMatrix(Globals::window->ratio), "u_projection");
+        Globals::resourceManager.getShader("tree")->setInt(2, "u_texture");
 
-    glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0);
-    vao.unbind();
+        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0);
+        vao.unbind();
+    }
 }

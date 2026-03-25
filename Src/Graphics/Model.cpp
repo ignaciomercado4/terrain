@@ -207,7 +207,7 @@ FaceIndex Model::parseFaceLine(std::string line)
     return fi;
 }
 
-void Model::render(Shader &shader)
+void Model::render(Shader &shader, const glm::mat4& model)
 {
     for (int i = meshes.size() - 1; i >= 0; i--)
     {
@@ -215,7 +215,7 @@ void Model::render(Shader &shader)
         Mesh &mesh = *meshes.at(i);
 
         shader.use();
-
-        mesh.render(shader);
+        
+        mesh.render(shader, model);
     }
 }

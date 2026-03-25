@@ -14,6 +14,7 @@
 #include "./Game/Camera.hpp"
 #include "./Game/Input.hpp"
 #include "./Game/Terrain.hpp"
+#include "./Game/Knife.hpp"
 #include "./Game/UI.hpp"
 #include "./Game/Tree.hpp"
 #include "./Misc/Globals.hpp"
@@ -26,7 +27,7 @@ int main()
     Globals::terrain->setPerlinNoiseHeightValues();
     UI::init(*Globals::window);
     Cubemap skybox;
-    Model model("./Resources/Models/Deer/deer1.obj");
+    Knife knife;
 
     while (!glfwWindowShouldClose(Globals::window->getWindowPointer()))
     {
@@ -47,7 +48,7 @@ int main()
         Globals::terrain->render();
         Globals::terrain->renderTrees();
         Globals::terrain->renderVegetation();
-        Globals::resourceManager.getModel("deer1")->render(*Globals::resourceManager.getShader("model"));
+        knife.render();
 
         UI::render();
 

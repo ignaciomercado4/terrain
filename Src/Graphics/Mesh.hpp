@@ -33,7 +33,7 @@ public:
         std::vector<Texture> _textures,
         const Material& _material);
 
-    void render(Shader &shader);
+    void render(Shader &shader, const glm::mat4 &model = glm::mat4(1.0f));
 };
 
 #endif

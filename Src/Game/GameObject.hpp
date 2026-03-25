@@ -20,15 +20,17 @@ public:
     GameObject(std::string name = "Unnamed object",
                glm::vec3 position = glm::vec3(0.0f),
                glm::vec3 rotation = glm::vec3(0.0f),
-               glm::vec3 scale = glm::vec3(1.0f)); 
+               glm::vec3 scale = glm::vec3(1.0f));
     ~GameObject() = default;
 
-    void setPosition(const glm::vec3& pos);
-    void setRotation(const glm::vec3& rot);
-    void setScale(const glm::vec3& scl);
+    void setPosition(const glm::vec3 &pos);
+    void setRotation(const glm::vec3 &rot);
+    void setScale(const glm::vec3 &scl);
+    void setActive(const bool &act);
     glm::vec3 getPosition() const;
     glm::vec3 getRotation() const;
     glm::vec3 getScale() const;
+    bool getActive() const;
 
     glm::mat4 getModelMatrix() const;
 };

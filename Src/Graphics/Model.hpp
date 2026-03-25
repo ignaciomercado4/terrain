@@ -24,7 +24,7 @@ private:
 
 public:
     Model(std::string path);
-    void render(Shader &shader);
+    void render(Shader &shader, const glm::mat4 &model = glm::mat4(1.0f));
 };
 
 #endif

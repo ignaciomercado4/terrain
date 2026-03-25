@@ -46,14 +46,12 @@ void Mesh::setBuffers()
     ebo.unbind();
 }
 
-void Mesh::render(Shader &shader)
+void Mesh::render(Shader &shader, const glm::mat4 &model)
 {
     shader.use();
     shader.setMat4(Globals::camera.getProjectionMatrix(Globals::window->ratio), "u_projection");
     shader.setMat4(Globals::camera.getViewMatrix(), "u_view");
-    glm::mat4 model(1.0f);
-    model = glm::translate(model, glm::vec3(15.0f, 0.0f, 4.0f));
-    model = glm::scale(model, glm::vec3(0.2f));
+ 
     shader.setMat4(model, "u_model");
     shader.setVec3(Globals::camera.getEye(), "u_viewPos");
     shader.setVec3(glm::vec3(15.0f, 50.0f, 15.0f), "u_lightPos");
