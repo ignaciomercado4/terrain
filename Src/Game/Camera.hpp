@@ -28,6 +28,7 @@ public:
 
     void addYaw(float offset);
     void addPitch(float offset);
+    void setEye(const glm::vec3& pos);
 
 private:
     void updateCameraVectors();

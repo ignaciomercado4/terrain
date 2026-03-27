@@ -44,6 +44,20 @@ void UI::render()
         ImGui::Text("CAMERA POSITION");
         ImGui::Separator();
         ImGui::Text("x = %f y = %f z = %f", Globals::camera.getEye().x, Globals::camera.getEye().y, Globals::camera.getEye().z);
+        ImGui::Separator();
+        ImGui::Text("CAMERA TP");
+        ImGui::Separator();
+        static double x = 0, y = 0, z = 0;
+        ImGui::InputDouble("X", &x);
+        ImGui::Separator();
+        ImGui::InputDouble("Y", &y);
+        ImGui::Separator();
+        ImGui::InputDouble("Z", &z);
+        ImGui::Separator();
+        if (ImGui::Button("DONE"))
+        {
+            Globals::camera.setEye(glm::vec3(x, y, z));
+        }
 
         // terrain gen controls
         ImGui::Separator();

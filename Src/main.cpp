@@ -17,6 +17,7 @@
 #include "./Game/Knife.hpp"
 #include "./Game/UI.hpp"
 #include "./Game/Tree.hpp"
+#include "./Game/Collider.hpp"
 #include "./Misc/Globals.hpp"
 #include "./Misc/Utils.hpp"
 
@@ -28,10 +29,23 @@ int main()
     UI::init(*Globals::window);
     Cubemap skybox;
     Knife knife;
+    AABB camColliderTest;
+    AABB randomColliderTest;
 
     while (!glfwWindowShouldClose(Globals::window->getWindowPointer()))
     {
         Utils::updateTiming();
+        randomColliderTest.min = glm::vec3(0.0f);
+        randomColliderTest.max = glm::vec3(1.0f);
+        glm::vec3 camMin(Globals::camera.getEye().x, Globals::camera.getEye().y, Globals::camera.getEye().z + 0.5);
+        glm::vec3 camMax(Globals::camera.getEye().x + 0.5, Globals::camera.getEye().y + 0.5, Globals::camera.getEye().z - 0.5);
+        camColliderTest.min = camMin;
+        camColliderTest.max = camMax;
+
+        if (Collider::checkCollisionAABB(randomColliderTest, camColliderTest))
+        {
+            std::cout << "Colliding!" << std::endl;
+        }
 
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glEnable(GL_DEPTH_TEST);
